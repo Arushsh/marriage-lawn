@@ -32,28 +32,33 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-surface/95 backdrop-blur-sm border-b border-black/[0.08]">
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
-        {/* Brand / Logo */}
-        <Link href="/" className="flex items-center gap-2.5">
+    <header className="sticky top-0 z-40 bg-bg border-b border-border">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
+        {/* Brand / Logo with Royal Heritage Monogram */}
+        <Link href="/" className="flex items-center gap-3">
           {site.logo ? (
-            <div className="relative h-9 w-32">
+            <div className="relative h-10 w-36">
               <Image
                 src={site.logo}
                 alt={site.venue_name}
                 fill
-                sizes="128px"
+                sizes="144px"
                 className="object-contain object-left"
               />
             </div>
           ) : (
-            <span className="font-serif text-xl sm:text-2xl text-primary font-normal">
-              {site.venue_name}
-            </span>
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 border border-accent flex items-center justify-center font-serif text-primary text-sm font-semibold tracking-wider">
+                GRL
+              </span>
+              <span className="font-serif text-lg sm:text-xl text-primary tracking-[0.05em] uppercase font-medium">
+                {site.venue_name}
+              </span>
+            </div>
           )}
         </Link>
 
-        {/* Desktop Nav Links: 4 max */}
+        {/* Desktop Nav Links: 4 max, tracked uppercase */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => {
             const active = isLinkActive(link.href);
@@ -61,10 +66,10 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
               <Link
                 key={link.label}
                 href={link.href}
-                className={`text-[15px] transition-colors relative py-1 ${
+                className={`text-xs uppercase tracking-[0.14em] transition-colors relative py-1.5 ${
                   active
-                    ? "font-medium text-primary border-b-2 border-primary"
-                    : "font-normal text-text hover:text-primary"
+                    ? "font-semibold text-primary border-b border-accent"
+                    : "font-medium text-text hover:text-primary"
                 }`}
               >
                 {link.label}
@@ -73,11 +78,19 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
           })}
         </nav>
 
-        {/* Desktop Enquire CTA */}
-        <div className="hidden md:flex items-center">
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-4">
+          {site.phone && (
+            <a
+              href={`tel:${site.phone}`}
+              className="text-xs uppercase tracking-[0.12em] font-medium text-text hover:text-primary transition-colors"
+            >
+              {site.phone}
+            </a>
+          )}
           <Link href="/contact">
             <Button size="sm" variant="primary">
-              Enquire
+              Reserve Date
             </Button>
           </Link>
         </div>
@@ -87,15 +100,15 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-text hover:text-primary transition-colors cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="p-2 text-text hover:text-primary transition-colors cursor-pointer rounded-none border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-menu"
           >
             {mobileMenuOpen ? (
-              <X className="w-6 h-6" strokeWidth={1.5} />
+              <X className="w-5 h-5" strokeWidth={1.5} />
             ) : (
-              <Menu className="w-6 h-6" strokeWidth={1.5} />
+              <Menu className="w-5 h-5" strokeWidth={1.5} />
             )}
           </button>
         </div>
@@ -103,7 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div id="mobile-nav-menu" className="md:hidden bg-surface border-b border-black/[0.08] px-4 py-6 space-y-4">
+        <div id="mobile-nav-menu" className="md:hidden bg-bg border-b border-border px-4 py-6 space-y-4">
           <div className="flex flex-col space-y-3">
             {navLinks.map((link) => {
               const active = isLinkActive(link.href);
@@ -112,9 +125,9 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
                   key={link.label}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-base transition-colors py-1.5 flex items-center justify-between ${
+                  className={`text-xs uppercase tracking-[0.14em] transition-colors py-2 flex items-center justify-between ${
                     active
-                      ? "text-primary font-medium pl-2 border-l-2 border-primary"
+                      ? "text-primary font-semibold pl-2 border-l-2 border-accent"
                       : "text-text hover:text-primary"
                   }`}
                 >
@@ -124,10 +137,10 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
             })}
           </div>
 
-          <div className="pt-2 border-t border-black/[0.06]">
+          <div className="pt-3 border-t border-border">
             <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>
               <Button className="w-full justify-center !h-12" variant="primary">
-                Enquire
+                Reserve Date
               </Button>
             </Link>
           </div>

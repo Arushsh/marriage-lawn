@@ -37,25 +37,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    // Base styles: 44px+ tap target, 8px radius, visible focus ring, no text wrapping
+    // Royal Heritage Editorial: 0px radius, 44px+ tap target, tracked uppercase, gold hairline accents
     const baseStyles =
-      "inline-flex items-center justify-center font-normal whitespace-nowrap rounded-lg select-none cursor-pointer transition-colors duration-150 " +
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 " +
-      "active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
+      "inline-flex items-center justify-center font-semibold text-xs tracking-[0.14em] uppercase whitespace-nowrap rounded-none select-none cursor-pointer transition-colors duration-150 " +
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 " +
+      "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
 
     const variantStyles: Record<ButtonVariant, string> = {
       primary:
-        "bg-primary hover:bg-primary-dark text-white border border-transparent shadow-none",
+        "bg-primary hover:bg-primary-dark text-white border border-accent/80 shadow-none",
       secondary:
-        "border border-primary text-primary hover:bg-primary hover:text-white bg-transparent",
+        "border border-accent text-primary hover:bg-surface bg-transparent",
       whatsapp:
-        "bg-[#1B8046] hover:bg-[#146637] text-white border border-transparent",
+        "bg-[#1B5E20] hover:bg-[#144A19] text-white border border-transparent",
       outline:
-        "border border-black/[0.12] text-text hover:bg-black/[0.04] bg-transparent",
+        "border border-border text-text hover:bg-surface bg-transparent",
       text:
-        "text-primary hover:underline underline-offset-4 bg-transparent p-0 h-auto min-h-0",
+        "text-primary hover:text-primary-dark underline underline-offset-4 bg-transparent p-0 h-auto min-h-0 normal-case tracking-normal text-sm font-medium",
       ghost:
-        "text-text hover:bg-black/[0.04] bg-transparent",
+        "text-text hover:bg-surface bg-transparent border border-transparent",
     };
 
     // Standard height 48px (h-12), small 44px (min-h-[44px])

@@ -53,40 +53,43 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
   return (
     <section
       id="reviews"
-      className="py-20 sm:py-32 bg-[#FFFBF4] border-t border-black/[0.04]"
+      className="py-20 sm:py-32 bg-bg border-b border-border"
     >
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8 space-y-12">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-12">
         <FadeUp>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-2">
-              <h2 className="font-serif text-[28px] sm:text-[40px] font-normal leading-[1.2] text-primary">
+            <div className="space-y-3">
+              <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
+                Patron Impressions
+              </span>
+              <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
                 Words from Families
               </h2>
-              <p className="text-[16px] sm:text-[17px] text-muted leading-[1.65] max-w-[60ch]">
+              <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[62ch]">
                 Genuine impressions from hosts and couples celebrated at {site.venue_name}.
               </p>
             </div>
 
             {/* Navigation Arrows */}
             {reviews.length > 1 && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handlePrev}
                   disabled={!canGoPrev}
-                  className="w-10 h-10 rounded-full border border-black/[0.12] bg-surface flex items-center justify-center text-text disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black/[0.03] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="w-10 h-10 rounded-none border border-border bg-white flex items-center justify-center text-text disabled:opacity-30 disabled:cursor-not-allowed hover:border-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   aria-label="Previous review"
                 >
-                  <ChevronLeft className="w-5 h-5" strokeWidth={1.5} />
+                  <ChevronLeft className="w-5 h-5 text-text" strokeWidth={1.5} />
                 </button>
                 <button
                   type="button"
                   onClick={handleNext}
                   disabled={!canGoNext}
-                  className="w-10 h-10 rounded-full border border-black/[0.12] bg-surface flex items-center justify-center text-text disabled:opacity-30 disabled:cursor-not-allowed hover:bg-black/[0.03] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  className="w-10 h-10 rounded-none border border-border bg-white flex items-center justify-center text-text disabled:opacity-30 disabled:cursor-not-allowed hover:border-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   aria-label="Next review"
                 >
-                  <ChevronRight className="w-5 h-5" strokeWidth={1.5} />
+                  <ChevronRight className="w-5 h-5 text-text" strokeWidth={1.5} />
                 </button>
               </div>
             )}
@@ -96,7 +99,7 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
         {/* Mobile View: 1 review at a time */}
         <div className="md:hidden">
           {reviews[currentIndex] && (
-            <div className="bg-surface rounded-2xl p-6 border border-black/[0.08] space-y-4">
+            <div className="bg-white rounded-none p-6 border border-border space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1 text-accent" aria-label={`${reviews[currentIndex].rating} out of 5 stars`}>
                   {[...Array(5)].map((_, i) => (
@@ -105,33 +108,33 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
                       className={`w-4 h-4 ${
                         i < reviews[currentIndex].rating
                           ? "fill-accent text-accent"
-                          : "text-black/15"
+                          : "text-stone-300"
                       }`}
                       strokeWidth={1.5}
                     />
                   ))}
                 </div>
-                <span className="text-xs text-muted font-medium uppercase tracking-wider">
-                  {reviews[currentIndex].source || "Google"}
+                <span className="text-[10px] text-accent font-semibold uppercase tracking-[0.16em]">
+                  {reviews[currentIndex].source || "Google Review"}
                 </span>
               </div>
 
-              <p className="text-[15px] sm:text-[16px] text-text/85 leading-[1.65]">
+              <p className="text-[15px] sm:text-[16px] text-text font-serif italic leading-[1.65]">
                 &ldquo;{reviews[currentIndex].text}&rdquo;
               </p>
 
-              <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between text-xs text-muted">
-                <span className="font-medium text-text">
+              <div className="pt-3 border-t border-border flex items-center justify-between text-xs text-muted">
+                <span className="font-semibold text-primary uppercase tracking-wider">
                   {reviews[currentIndex].author_name}
                 </span>
                 {reviews[currentIndex].date && (
-                  <span>{reviews[currentIndex].date}</span>
+                  <span className="uppercase tracking-wider">{reviews[currentIndex].date}</span>
                 )}
               </div>
             </div>
           )}
 
-          <div className="pt-3 text-center text-xs text-muted">
+          <div className="pt-3 text-center text-xs text-muted uppercase tracking-wider">
             {currentIndex + 1} of {reviews.length}
           </div>
         </div>
@@ -141,9 +144,9 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
           {desktopReviews.map((rev) => (
             <div
               key={rev.id}
-              className="bg-surface rounded-2xl p-7 border border-black/[0.08] flex flex-col justify-between space-y-4 hover:border-black/[0.16] transition-colors"
+              className="bg-white rounded-none p-7 border border-border flex flex-col justify-between space-y-4 transition-colors hover:border-accent"
             >
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1 text-accent" aria-label={`${rev.rating} out of 5 stars`}>
                     {[...Array(5)].map((_, i) => (
@@ -152,27 +155,27 @@ export const ReviewsSection: React.FC<ReviewsSectionProps> = ({
                         className={`w-4 h-4 ${
                           i < rev.rating
                             ? "fill-accent text-accent"
-                            : "text-black/15"
+                            : "text-stone-300"
                         }`}
                         strokeWidth={1.5}
                       />
                     ))}
                   </div>
-                  <span className="text-xs text-muted font-medium uppercase tracking-wider">
-                    {rev.source || "Google"}
+                  <span className="text-[10px] text-accent font-semibold uppercase tracking-[0.16em]">
+                    {rev.source || "Google Review"}
                   </span>
                 </div>
 
-                <p className="text-[15px] text-text/85 leading-[1.65]">
+                <p className="text-[15px] text-text font-serif italic leading-[1.65]">
                   &ldquo;{rev.text}&rdquo;
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-black/[0.06] flex items-center justify-between text-xs text-muted">
-                <span className="font-medium text-text">
+              <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-muted">
+                <span className="font-semibold text-primary uppercase tracking-wider">
                   {rev.author_name}
                 </span>
-                {rev.date && <span>{rev.date}</span>}
+                {rev.date && <span className="uppercase tracking-wider">{rev.date}</span>}
               </div>
             </div>
           ))}

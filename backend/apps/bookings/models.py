@@ -56,6 +56,8 @@ class Enquiry(models.Model):
         ("reception",   "Reception"),
         ("engagement",  "Engagement"),
         ("birthday",    "Birthday"),
+        ("corporate",   "Corporate and Official Events"),
+        ("anniversary", "Anniversary"),
         ("other",       "Other"),
     ]
 
@@ -89,6 +91,14 @@ class Enquiry(models.Model):
 
     # Event details
     event_type  = models.CharField(max_length=20, choices=EVENT_CHOICES, default="wedding")
+    package     = models.ForeignKey(
+        "venue.Package",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="enquiries",
+        help_text="Selected package if enquired for a specific tier",
+    )
     event_date  = models.DateField(null=True, blank=True)
     guest_count = models.CharField(max_length=20, choices=GUEST_COUNT_CHOICES, blank=True)
     message     = models.TextField(max_length=500, blank=True)

@@ -45,17 +45,49 @@ export_as_csv.short_description = "Export selected enquiries as CSV"
 
 @admin.register(Enquiry)
 class EnquiryAdmin(admin.ModelAdmin):
-    list_display   = ["name", "phone", "event_type", "event_date", "guest_count", "status", "source", "created_at"]
-    list_filter    = ["status", "event_type", "source"]
+    list_display   = [
+        "name",
+        "phone",
+        "event_type",
+        "package",
+        "event_date",
+        "guest_count",
+        "status",
+        "source",
+        "created_at",
+    ]
+    list_filter    = ["status", "event_type", "package", "source"]
     search_fields  = ["name", "phone", "email", "message"]
-    readonly_fields = ["name", "phone", "email", "event_type", "event_date", "guest_count", "message", "source", "ip_address", "created_at"]
+    readonly_fields = [
+        "name",
+        "phone",
+        "email",
+        "event_type",
+        "package",
+        "event_date",
+        "guest_count",
+        "message",
+        "source",
+        "ip_address",
+        "created_at",
+    ]
     ordering       = ["-created_at"]
     date_hierarchy = "created_at"
     actions        = [export_as_csv]
 
     fieldsets = [
         ("Lead info", {
-            "fields": ["name", "phone", "email", "event_type", "event_date", "guest_count", "message", "source"]
+            "fields": [
+                "name",
+                "phone",
+                "email",
+                "event_type",
+                "package",
+                "event_date",
+                "guest_count",
+                "message",
+                "source",
+            ]
         }),
         ("CRM", {
             "fields": ["status", "owner_note"]

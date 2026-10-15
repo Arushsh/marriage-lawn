@@ -58,33 +58,36 @@ export const HowItWorksSection: React.FC<HowItWorksSectionProps> = ({
   return (
     <section
       id="how-it-works"
-      className="py-20 sm:py-32 bg-surface border-t border-black/[0.06]"
+      className="py-20 sm:py-32 bg-bg border-b border-border"
     >
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8 space-y-12 sm:space-y-16">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-12 sm:space-y-16">
         <FadeUp>
-          <div className="space-y-2">
-            <h2 className="font-serif text-[28px] sm:text-[40px] font-normal leading-[1.2] text-primary">
-              How Booking Works
+          <div className="space-y-3">
+            <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
+              Ceremonial Timeline &amp; Booking
+            </span>
+            <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
+              How Reservation Operates
             </h2>
-            <p className="text-[16px] sm:text-[17px] text-muted leading-[1.65] max-w-[60ch]">
-              A straightforward four-step process to reserve your event date with total clarity.
+            <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[62ch]">
+              A structured four-step procedure to reserve your wedding date with absolute transparency.
             </p>
           </div>
         </FadeUp>
 
-        {/* Numbered steps in a clean responsive row/column list, not boxed cards */}
+        {/* Numbered steps in architectural column grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-10">
           {steps.map((item, idx) => (
             <div
               key={item.step}
-              className={`relative flex flex-col justify-start pt-4 sm:pt-6 border-t border-black/[0.12] ${
-                idx === 0 ? "border-primary" : ""
+              className={`relative flex flex-col justify-start pt-5 sm:pt-6 border-t ${
+                idx === 0 ? "border-accent" : "border-border"
               }`}
             >
-              <span className="font-mono text-sm tracking-widest text-primary/80 font-medium mb-3">
+              <span className="font-serif text-lg tracking-widest text-accent font-semibold mb-3">
                 {item.step}
               </span>
-              <h3 className="font-serif text-[20px] sm:text-[22px] font-normal text-text leading-[1.25] mb-2">
+              <h3 className="font-serif text-[20px] sm:text-[22px] font-normal text-primary leading-[1.25] mb-2">
                 {item.title}
               </h3>
               <p className="text-[15px] text-muted leading-[1.6]">

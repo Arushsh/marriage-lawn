@@ -18,58 +18,63 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ site }) => {
   ];
 
   return (
-    <section id="about" className="py-20 sm:py-32">
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8">
+    <section id="about" className="py-20 sm:py-32 bg-bg border-b border-border">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Image */}
+          {/* Framed Archival Image: 1px hairline border + inset mat */}
           <FadeUp delay={0.05}>
-            <div className="relative h-[320px] sm:h-[460px] rounded-2xl overflow-hidden bg-black/5">
-              <Image
-                src={
-                  site.hero_image ||
-                  "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80"
-                }
-                alt={`Photographic view of ${site.venue_name}`}
-                fill
-                sizes="(max-width: 1024px) 100vw, 560px"
-                className="object-cover"
-              />
+            <div className="p-2 sm:p-3 bg-white border border-border">
+              <div className="relative h-[320px] sm:h-[460px] overflow-hidden bg-stone-100">
+                <Image
+                  src={
+                    site.hero_image ||
+                    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80"
+                  }
+                  alt={`Photographic view of ${site.venue_name}`}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  className="object-cover"
+                />
+              </div>
             </div>
           </FadeUp>
 
-          {/* Text */}
+          {/* Editorial Content */}
           <FadeUp delay={0.15} className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="font-serif text-[28px] sm:text-[40px] font-normal leading-[1.2] text-primary">
+            <div className="space-y-3">
+              <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
+                Estate Heritage &amp; Grounds
+              </span>
+              <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
                 About {site.venue_name}
               </h2>
-              <p className="text-[16px] sm:text-[17px] text-text/80 leading-[1.65] max-w-[60ch]">
+              <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[60ch]">
                 {site.about_text ||
-                  `${site.venue_name} is one of ${site.city}'s most established marriage lawns — a quiet, spacious venue for weddings, receptions, and family gatherings.`}
+                  `${site.venue_name} is one of ${site.city}'s most established marriage lawns — a quiet, spacious estate for weddings, receptions, and multi-day family celebrations.`}
               </p>
             </div>
 
-            <ul className="space-y-3 border-t border-black/[0.06] pt-6">
+            <ul className="space-y-3 border-t border-border pt-6">
               {facts.map((fact, i) => (
                 <li
                   key={i}
-                  className="flex items-center gap-3 text-sm text-text/75 border-b border-black/[0.04] pb-3 last:border-0 last:pb-0"
+                  className="flex items-center gap-3 text-sm text-text border-b border-border/60 pb-3 last:border-0 last:pb-0"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
+                  <span className="text-accent text-xs flex-shrink-0">◆</span>
                   <span>{fact}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-4 pt-2">
               <a href="#facilities">
                 <Button variant="primary" size="md">
-                  See Halls &amp; Lawn
+                  View Lawn &amp; Ballroom
                 </Button>
               </a>
               <a href="#contact">
-                <Button variant="outline" size="md">
-                  Schedule a Visit
+                <Button variant="secondary" size="md">
+                  Schedule Private Visit
                 </Button>
               </a>
             </div>

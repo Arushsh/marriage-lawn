@@ -1,17 +1,19 @@
 import { SiteSettings } from "./types/api";
 
 export const defaultTheme = {
-  primary: "#7B1E3A",       // deep maroon
-  primaryDark: "#5A1229",
-  accent: "#C9A227",        // gold
-  bg: "#FFF8EE",            // warm ivory
-  surface: "#FFFFFF",
-  text: "#2B2B2B",
-  muted: "#6B6B6B",
+  primary: "#6B1426",       // deep royal maroon
+  primaryDark: "#4B0013",   // darker royal maroon
+  accent: "#B8860B",        // warm antique gold
+  bg: "#FDFBF7",            // ivory canvas
+  surface: "#FFF8F5",       // subtle parchment surface
+  card: "#FFFFFF",          // crisp card surface
+  text: "#1E1B19",          // charcoal onyx
+  muted: "#554243",         // muted umber
+  border: "#E6DFC8",        // hairline divider
   success: "#2E7D32",       // available
-  danger: "#C62828",        // booked
-  warning: "#EF8F00",       // tentative
-  radius: "14px",
+  danger: "#6B1426",        // booked
+  warning: "#B8860B",       // tentative
+  radius: "0px",
 };
 
 export const fallbackSiteSettings: SiteSettings = {

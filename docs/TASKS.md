@@ -42,7 +42,15 @@
 - [ ] `/thank-you` and `/privacy` pages
 - [ ] Loading and error states, fallback WhatsApp if API fails
 
-## Phase 3: SEO, polish, QA (Day 6)
+## Phase 2.5: Services, menu, packages upgrade and 360 tour (Chunks 8-9)
+- [ ] Backend: Service, MenuCategory, MenuItem models; Package price_unit, guest range, grouped inclusions; Enquiry package FK and extra event types; admin, seed data, endpoints, tests
+- [ ] Frontend: Services section and /services, Menu section and /menu, package details drawer, package and event prefill in the enquiry form
+- [ ] Backend: TourScene, TourHotspot, /tour/ endpoint, admin with inline hotspots, seed with 2-3 free 360 sample images
+- [ ] Frontend: 360 viewer (Photo Sphere Viewer), scene chips, hotspots, lazy loading, fallback, /tour page
+- [ ] Update navbar and home section order (see REFERENCES.md)
+- [ ] Phase 2 later: interactive 3D layout planner (F-29)
+
+## Phase 3: SEO, polish, QA (Chunk 10, Day 6)
 - [ ] Metadata, OG image, sitemap, robots
 - [ ] LocalBusiness/EventVenue JSON-LD
 - [ ] Image optimization and lazy loading audit

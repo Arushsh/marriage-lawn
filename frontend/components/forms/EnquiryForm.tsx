@@ -159,13 +159,16 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
     );
 
     return (
-      <div className="bg-surface rounded-2xl p-8 border border-black/[0.08] space-y-6">
+      <div className="bg-white rounded-none p-8 border border-accent space-y-6">
         <div className="space-y-2">
-          <h3 className="font-serif text-[20px] sm:text-[24px] font-normal leading-[1.25] text-primary">
-            Enquiry Received
+          <span className="text-[10px] font-semibold text-accent uppercase tracking-[0.16em] block">
+            Reservation Received
+          </span>
+          <h3 className="font-serif text-[22px] sm:text-[26px] font-normal leading-[1.25] text-primary">
+            Inquiry Registered
           </h3>
-          <p className="text-[16px] text-text/80 max-w-[60ch] leading-[1.65]">
-            Thank you. Our management team will contact you shortly on your phone to discuss your event details and schedule a walkthrough.
+          <p className="text-[15px] sm:text-[16px] text-muted max-w-[60ch] leading-[1.65]">
+            Thank you. Our estate management concierge will reach out to you shortly to finalize your celebration date and arrange a private walkthrough.
           </p>
         </div>
 
@@ -201,20 +204,23 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
     <form
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      className="bg-surface rounded-2xl p-6 sm:p-8 border border-black/[0.08] space-y-5"
+      className="bg-white rounded-none p-6 sm:p-8 border border-border space-y-5 shadow-none"
     >
       <div className="space-y-1">
-        <h3 className="font-serif text-[20px] sm:text-[24px] font-normal leading-[1.25] text-primary">
+        <span className="text-[10px] font-semibold text-accent uppercase tracking-[0.16em] block">
+          Priority Inquiries
+        </span>
+        <h3 className="font-serif text-[22px] sm:text-[26px] font-normal leading-[1.25] text-primary">
           Check Availability &amp; Rates
         </h3>
         <p className="text-sm text-muted">
-          Fill in your details below and we will get back to you within 24 hours.
+          Fill in your celebration specifications below. Estate concierge replies within 24 hours.
         </p>
       </div>
 
       {/* API / Rate limit error notice with WhatsApp fallback */}
       {apiError && (
-        <div className="p-4 rounded-xl border border-red-200 bg-red-50/70 text-sm text-stone-800 space-y-3">
+        <div className="p-4 rounded-none border border-red-300 bg-red-50 text-sm text-stone-800 space-y-3">
           <p>{apiError.message}</p>
           {apiError.whatsappUrl && (
             <a
@@ -241,8 +247,8 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Name */}
       <div className="space-y-1.5">
-        <label htmlFor="name" className="block text-sm font-medium text-text">
-          Full Name <span className="text-red-700">*</span>
+        <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
+          Full Name <span className="text-primary">*</span>
         </label>
         <input
           id="name"
@@ -251,8 +257,8 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           aria-invalid={errors.name ? "true" : undefined}
           aria-describedby={errors.name ? "name-error" : undefined}
           {...register("name")}
-          className={`w-full h-12 px-4 rounded-lg border text-base text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 ${
-            errors.name ? "border-red-400" : "border-black/[0.12]"
+          className={`w-full h-12 px-4 rounded-none border text-base text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent ${
+            errors.name ? "border-red-400" : "border-border"
           }`}
         />
         {errors.name && (
@@ -262,11 +268,11 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Phone */}
       <div className="space-y-1.5">
-        <label htmlFor="phone" className="block text-sm font-medium text-text">
-          Mobile Number (10 Digits) <span className="text-red-700">*</span>
+        <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
+          Mobile Number (10 Digits) <span className="text-primary">*</span>
         </label>
-        <div className="flex h-12 rounded-lg border border-black/[0.12] overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-1">
-          <span className="bg-black/[0.04] px-4 text-sm text-muted font-mono flex items-center border-r border-black/[0.08]">
+        <div className="flex h-12 rounded-none border border-border overflow-hidden focus-within:ring-1 focus-within:ring-accent focus-within:border-accent">
+          <span className="bg-stone-50 px-4 text-sm text-accent font-mono flex items-center border-r border-border font-medium">
             +91
           </span>
           <input
@@ -278,7 +284,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             aria-invalid={errors.phone ? "true" : undefined}
             aria-describedby={errors.phone ? "phone-error" : undefined}
             {...register("phone")}
-            className="w-full h-full px-4 text-base text-text bg-surface focus:outline-none"
+            className="w-full h-full px-4 text-base text-text bg-white focus:outline-none"
           />
         </div>
         {errors.phone && (
@@ -290,7 +296,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Event Type */}
         <div className="space-y-1.5">
-          <label htmlFor="event_type" className="block text-sm font-medium text-text">
+          <label htmlFor="event_type" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
             Event Type
           </label>
           <select
@@ -298,7 +304,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             aria-invalid={errors.event_type ? "true" : undefined}
             aria-describedby={errors.event_type ? "event-type-error" : undefined}
             {...register("event_type")}
-            className="w-full h-12 px-3.5 rounded-lg border border-black/[0.12] text-sm text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+            className="w-full h-12 px-3.5 rounded-none border border-border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
           >
             <option value="wedding">Wedding</option>
             <option value="reception">Reception</option>
@@ -313,7 +319,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
         {/* Guest Range */}
         <div className="space-y-1.5">
-          <label htmlFor="guest_count" className="block text-sm font-medium text-text">
+          <label htmlFor="guest_count" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
             Expected Guests
           </label>
           <select
@@ -321,7 +327,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             aria-invalid={errors.guest_count ? "true" : undefined}
             aria-describedby={errors.guest_count ? "guest-count-error" : undefined}
             {...register("guest_count")}
-            className="w-full h-12 px-3.5 rounded-lg border border-black/[0.12] text-sm text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+            className="w-full h-12 px-3.5 rounded-none border border-border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
           >
             <option value="under_200">Under 200</option>
             <option value="200_500">200 – 500</option>
@@ -338,7 +344,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
       {/* Date */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <label htmlFor="event_date" className="block text-sm font-medium text-text">
+          <label htmlFor="event_date" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
             Preferred Date
           </label>
           {currentDateValue && onClearSelectedDate && (
@@ -350,9 +356,9 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
                 setValue("event_date", "");
                 onClearSelectedDate();
               }}
-              className="text-xs"
+              className="text-xs uppercase tracking-wider text-primary"
             >
-              Clear
+              Clear Date
             </Button>
           )}
         </div>
@@ -362,12 +368,12 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           aria-invalid={errors.event_date ? "true" : undefined}
           aria-describedby={errors.event_date ? "event-date-error" : undefined}
           {...register("event_date")}
-          className={`w-full h-12 px-4 rounded-lg border text-sm text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 ${
-            errors.event_date ? "border-red-400" : "border-black/[0.12]"
+          className={`w-full h-12 px-4 rounded-none border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent ${
+            errors.event_date ? "border-red-400" : "border-border"
           }`}
         />
         {currentDateValue && (
-          <p className="text-xs text-muted">
+          <p className="text-xs text-accent font-medium">
             Selected: {formatDisplayDate(currentDateValue)}
           </p>
         )}
@@ -378,18 +384,18 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Message */}
       <div className="space-y-1.5">
-        <label htmlFor="message" className="block text-sm font-medium text-text">
-          Message or Questions (Optional)
+        <label htmlFor="message" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
+          Celebration Specifications (Optional)
         </label>
         <textarea
           id="message"
           rows={3}
           maxLength={500}
-          placeholder="Mention specific requirements like catering preference, rooms needed, etc."
+          placeholder="Mention specific requirements like catering preferences, mandap decor, rooms required, etc."
           aria-invalid={errors.message ? "true" : undefined}
           aria-describedby={errors.message ? "message-error" : undefined}
           {...register("message")}
-          className="w-full p-4 rounded-lg border border-black/[0.12] text-sm text-text bg-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 resize-none"
+          className="w-full p-4 rounded-none border border-border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none"
         />
         {errors.message && (
           <p id="message-error" role="alert" className="text-sm text-red-700">{errors.message.message}</p>
@@ -403,9 +409,9 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           variant="primary"
           size="md"
           disabled={submitting}
-          className="w-full justify-center !h-12"
+          className="w-full justify-center !h-12 !border-accent"
         >
-          {submitting ? "Submitting..." : "Send Enquiry"}
+          {submitting ? "Submitting..." : "Send Reservation Request"}
         </Button>
       </div>
     </form>

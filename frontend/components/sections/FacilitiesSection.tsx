@@ -49,17 +49,20 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
   const topFacilities = showAllFacilities ? facilities : facilities.slice(0, 8);
 
   return (
-    <section id="facilities" className="py-20 sm:py-32">
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8 space-y-16">
+    <section id="facilities" className="py-20 sm:py-32 bg-bg border-b border-border">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-16">
         {/* Halls & Event Spaces */}
         <div className="space-y-8">
           <FadeUp>
-            <div className="space-y-2">
-              <h2 className="font-serif text-[28px] sm:text-[40px] font-normal leading-[1.2] text-primary">
-                Halls &amp; Spaces
+            <div className="space-y-3">
+              <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
+                Palatial Architecture
+              </span>
+              <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
+                Halls &amp; Event Lawns
               </h2>
-              <p className="text-[16px] sm:text-[17px] text-muted leading-[1.65] max-w-[60ch]">
-                Dedicated spaces for wedding rituals, receptions, and gatherings with clear seating and floating capacities.
+              <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[62ch]">
+                Dedicated spaces for sacred rituals, regal receptions, and gatherings with clear seating and floating capacities.
               </p>
             </div>
           </FadeUp>
@@ -67,51 +70,57 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {halls.map((hall, idx) => (
               <FadeUp key={hall.id || idx} delay={idx * 0.08}>
-                <Card className="flex flex-col h-full overflow-hidden p-0 rounded-2xl border border-black/[0.08] bg-surface">
-                  <div className="relative h-48 w-full bg-black/5">
-                    <Image
-                      src={
-                        (hall.image && hall.image.trim())
-                          ? hall.image
-                          : idx === 0
-                          ? "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80"
-                          : idx === 1
-                          ? "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80"
-                          : "https://images.unsplash.com/photo-1478146896981-b80fe463b330?auto=format&fit=crop&w=800&q=80"
-                      }
-                      alt={hall.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 360px"
-                      className="object-cover"
-                      priority={idx === 0}
-                    />
-                    <div className="absolute top-3 right-3 bg-surface/95 text-text text-xs px-2.5 py-1 rounded-md border border-black/10 font-medium">
-                      {hall.is_ac ? "Air Conditioned" : "Open Lawn"}
+                <Card className="flex flex-col h-full overflow-hidden p-0 rounded-none border border-border bg-white transition-colors hover:border-accent">
+                  <div className="p-2 bg-white">
+                    <div className="relative h-52 w-full overflow-hidden bg-stone-100">
+                      <Image
+                        src={
+                          (hall.image && hall.image.trim())
+                            ? hall.image
+                            : idx === 0
+                            ? "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80"
+                            : idx === 1
+                            ? "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80"
+                            : "https://images.unsplash.com/photo-1478146896981-b80fe463b330?auto=format&fit=crop&w=800&q=80"
+                        }
+                        alt={hall.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                        className="object-cover"
+                        priority={idx === 0}
+                      />
+                      <div className="absolute top-3 right-3 bg-bg text-primary text-[10px] font-semibold tracking-[0.14em] uppercase px-2.5 py-1 border border-accent">
+                        {hall.is_ac ? "Air Conditioned" : "Open Lawn"}
+                      </div>
                     </div>
                   </div>
 
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <h3 className="font-serif text-[20px] sm:text-[24px] font-normal leading-[1.25] text-primary">
+                      <h3 className="font-serif text-[22px] font-normal leading-[1.25] text-primary">
                         {hall.name}
                       </h3>
                       {hall.description && (
-                        <p className="text-sm text-text/75 leading-relaxed">
+                        <p className="text-sm text-muted leading-relaxed">
                           {hall.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-black/[0.06] flex items-center justify-between text-xs text-text/80">
+                    <div className="pt-4 border-t border-border flex items-center justify-between text-xs">
                       <div>
-                        <span className="text-muted block text-[11px]">Seating</span>
-                        <span className="font-medium text-sm text-text">
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold block">
+                          Seating Capacity
+                        </span>
+                        <span className="font-medium text-base text-text mt-0.5 block">
                           {hall.seating_capacity} guests
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="text-muted block text-[11px]">Floating</span>
-                        <span className="font-medium text-sm text-primary">
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold block">
+                          Floating Capacity
+                        </span>
+                        <span className="font-medium text-base text-primary mt-0.5 block">
                           {hall.floating_capacity} guests
                         </span>
                       </div>
@@ -125,20 +134,23 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
 
         {/* Facilities & Amenities List */}
         {facilities.length > 0 && (
-          <div className="space-y-6 pt-6 border-t border-black/[0.06]">
+          <div className="space-y-6 pt-8 border-t border-border">
             <FadeUp>
               <div className="space-y-2">
-                <h3 className="font-serif text-[20px] sm:text-[24px] font-normal leading-[1.25] text-primary">
-                  Venue Facilities &amp; Amenities
+                <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
+                  Logistics &amp; Infrastructure
+                </span>
+                <h3 className="font-serif text-[24px] sm:text-[28px] font-normal leading-[1.25] text-primary">
+                  Estate Facilities &amp; Amenities
                 </h3>
-                <p className="text-sm text-muted max-w-[60ch]">
-                  Key amenities and logistics available on site for guests and vendors.
+                <p className="text-sm text-muted max-w-[62ch]">
+                  Key amenities and logistics available on site for guests, families, and decorators.
                 </p>
               </div>
             </FadeUp>
 
             {/* Simple two-column list with thin dividers */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 divide-y sm:divide-y-0 border-t border-b border-black/[0.06] py-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 divide-y sm:divide-y-0 border-t border-b border-border py-2">
               <div className="divide-y divide-black/[0.05]">
                 {topFacilities
                   .slice(0, Math.ceil(topFacilities.length / 2))

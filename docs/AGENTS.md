@@ -27,6 +27,9 @@ Never skip the gate to save time. Never mark a chunk done with failing tests or 
 - **ponytail:** run /skills to see its 6 skills. Use a ponytail skill when its description matches the task at hand, and name the skill you used in your report. Do not invent usages.
 - **Stitch MCP:** used ONLY in the UI revamp phase (see docs/TASKS.md, Phase 3.5). Do not call it during other chunks.
 
+## Reference sites
+docs/REFERENCES.md lists ideas taken from other venue sites (alron.in). Use them for structure and features only. Never copy their text, images, logos, layout or graphics. Do not copy their weaknesses either (dense text, ornamental graphics, typos).
+
 ## Code rules
 - Mobile first (360px). Typed code (TypeScript strict, Python type hints where useful).
 - No hardcoded venue data, secrets or API URLs. Env vars only. Keep .env.example current.

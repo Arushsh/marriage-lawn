@@ -17,15 +17,18 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ site }) => {
   );
 
   return (
-    <section className="py-20 sm:py-32 bg-surface border-t border-black/[0.08]">
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8 text-center">
+    <section className="py-20 sm:py-32 bg-surface border-b border-border text-center">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
         <FadeUp>
-          <div className="max-w-[640px] mx-auto space-y-4">
-            <h2 className="font-serif text-[32px] sm:text-[44px] text-primary font-normal leading-[1.2]">
-              Reserve Your Date at {site.venue_name}
+          <div className="max-w-[720px] mx-auto p-8 sm:p-14 bg-white border border-accent space-y-5">
+            <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.2em] block">
+              Direct Estate Concierge
+            </span>
+            <h2 className="font-serif text-[32px] sm:text-[46px] text-primary font-normal leading-[1.2]">
+              Reserve Your Auspicious Date
             </h2>
-            <p className="text-[16px] sm:text-[17px] text-muted leading-[1.65] max-w-[50ch] mx-auto">
-              Dates during prime wedding muhurat fill months in advance. Check open dates or speak directly with our team.
+            <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[50ch] mx-auto">
+              Dates during prime wedding muhurat fill months in advance. Check open dates or consult our senior wedding concierge.
             </p>
 
             <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -36,23 +39,23 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ site }) => {
                 className="w-full sm:w-auto"
               >
                 <Button
-                  variant="whatsapp"
+                  variant="primary"
                   size="lg"
-                  className="w-full sm:w-auto"
-                  leftIcon={<MessageSquare className="w-5 h-5" strokeWidth={1.5} />}
+                  className="w-full sm:w-auto !h-12 !px-8"
+                  leftIcon={<MessageSquare className="w-4 h-4 text-accent" strokeWidth={1.5} />}
                 >
-                  WhatsApp Us
+                  WhatsApp Concierge
                 </Button>
               </a>
 
               <Link href="/#availability" className="w-full sm:w-auto">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="lg"
-                  className="w-full sm:w-auto"
-                  leftIcon={<Calendar className="w-5 h-5 text-primary" strokeWidth={1.5} />}
+                  className="w-full sm:w-auto !h-12 !px-8"
+                  leftIcon={<Calendar className="w-4 h-4 text-primary" strokeWidth={1.5} />}
                 >
-                  Check Dates
+                  Check Open Dates
                 </Button>
               </Link>
             </div>

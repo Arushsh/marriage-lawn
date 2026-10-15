@@ -17,6 +17,7 @@ Help a lawn owner get more booking enquiries online: photos, availability, packa
 | [TASKS.md](TASKS.md) | Build roadmap and checklist |
 | [CONTENT.md](CONTENT.md) | Client onboarding checklist, copy, SEO keywords |
 | [AGENTS.md](AGENTS.md) | Rules for Antigravity: workflow, review gate, plugins, code and design rules |
+| [REFERENCES.md](REFERENCES.md) | What we take from alron.in and what we avoid |
 | DESIGN.md (later) | Design tokens generated from Stitch during the UI revamp |
 
 ## Stack (summary)

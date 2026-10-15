@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Poppins } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/api";
 import { constructMetadata, generateEventVenueSchema } from "@/lib/seo";
@@ -13,14 +13,14 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
 });
 
-const poppins = Poppins({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-poppins",
+  variable: "--font-jakarta",
   display: "swap",
-  weight: ["400", "500"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,7 +39,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${poppins.variable} scroll-smooth`}
+      className={`${playfair.variable} ${jakarta.variable} scroll-smooth`}
     >
       <head>
         <ThemeInjector site={site} />

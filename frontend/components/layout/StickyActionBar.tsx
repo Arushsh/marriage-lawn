@@ -17,20 +17,20 @@ export const StickyActionBar: React.FC<StickyActionBarProps> = ({ site }) => {
   );
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-surface border-t border-black/[0.08] px-4 pt-2 pb-[calc(8px+env(safe-area-inset-bottom,0px))]">
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-bg border-t border-accent px-4 pt-2 pb-[calc(8px+env(safe-area-inset-bottom,0px))]">
       <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
         <a
           href={`tel:${site.phone}`}
           className="w-full"
-          aria-label={`Call ${site.venue_name}`}
+          aria-label={`Direct Call ${site.venue_name}`}
         >
           <Button
-            variant="outline"
+            variant="secondary"
             size="md"
-            className="w-full justify-center !h-12"
+            className="w-full justify-center !h-12 !border-accent !text-primary"
             leftIcon={<Phone className="w-4 h-4 text-primary" strokeWidth={1.5} />}
           >
-            Call
+            Direct Call
           </Button>
         </a>
 
@@ -39,13 +39,13 @@ export const StickyActionBar: React.FC<StickyActionBarProps> = ({ site }) => {
           target="_blank"
           rel="noopener noreferrer"
           className="w-full"
-          aria-label="Send message on WhatsApp"
+          aria-label="Concierge on WhatsApp"
         >
           <Button
-            variant="whatsapp"
+            variant="primary"
             size="md"
-            className="w-full justify-center !h-12"
-            leftIcon={<MessageCircle className="w-4 h-4" strokeWidth={1.5} />}
+            className="w-full justify-center !h-12 !bg-primary !border-accent"
+            leftIcon={<MessageCircle className="w-4 h-4 text-accent" strokeWidth={1.5} />}
           >
             WhatsApp
           </Button>

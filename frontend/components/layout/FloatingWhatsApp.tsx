@@ -27,10 +27,10 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({ site }) => {
         <Button
           variant="whatsapp"
           size="md"
-          className="shadow-sm gap-2"
-          leftIcon={<MessageCircle className="w-5 h-5" strokeWidth={1.5} />}
+          className="border border-accent/60 gap-2 !shadow-none"
+          leftIcon={<MessageCircle className="w-5 h-5 text-accent" strokeWidth={1.5} />}
         >
-          WhatsApp Us
+          Concierge WhatsApp
         </Button>
       </a>
     </div>

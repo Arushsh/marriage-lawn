@@ -39,18 +39,20 @@ export const HighlightsStrip: React.FC<HighlightsStripProps> = ({
   ];
 
   return (
-    <section className="py-10 sm:py-14 border-b border-black/[0.06] bg-surface/50">
-      <div className="max-w-[1120px] mx-auto px-4 sm:px-8">
-        <div className="flex flex-nowrap sm:grid sm:grid-cols-4 gap-8 sm:gap-0 overflow-x-auto no-scrollbar divide-x divide-black/[0.08]">
+    <section className="py-12 sm:py-16 border-b border-border bg-surface">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {items.map((item, i) => (
             <div
               key={i}
-              className="min-w-[140px] sm:min-w-0 flex-shrink-0 px-4 sm:px-8 first:pl-0 last:pr-0 text-center sm:text-left"
+              className="bg-white border border-border p-6 text-center sm:text-left transition-colors"
             >
-              <span className="block font-serif text-3xl sm:text-4xl font-normal text-primary">
+              <span className="block font-serif text-3xl sm:text-4xl font-normal text-primary tracking-tight">
                 {item.value}
               </span>
-              <span className="text-sm text-muted mt-0.5 block">{item.label}</span>
+              <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.16em] mt-1.5 block">
+                {item.label}
+              </span>
             </div>
           ))}
         </div>

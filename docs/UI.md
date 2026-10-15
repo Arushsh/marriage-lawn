@@ -44,7 +44,7 @@ Scale (mobile / desktop): H1 32/56, H2 26/40, H3 20/28, body 16/18, small 14.
 ## 5. Global components
 | Component | Behaviour |
 |---|---|
-| **Navbar** | Logo + links (Gallery, Packages, Availability, Reviews, Contact) + "Enquire" button. Collapses to a menu on mobile. Sticky with blur background. |
+| **Navbar** | Logo + 4 links (Services, Menu, Packages, Gallery) + "Enquire" button. Collapses to a menu on mobile. Sticky with blur background. |
 | **Sticky action bar (mobile)** | Fixed bottom: [Call] [WhatsApp] [Check Dates]. Always visible. |
 | **Floating WhatsApp button (desktop)** | Bottom-right, subtle pulse |
 | **Footer** | Address, phone, hours, map link, social icons, copyright, "Website by Arush" credit |
@@ -91,6 +91,33 @@ Icon grid: seating, floating capacity, bridal room, guest rooms, parking, DJ all
 ### 6.6 Packages
 3 cards (Basic, Standard, Premium) with "Most Popular" badge on the middle one. Each lists inclusions and a "Starting from ₹X" or "Get Quote" button. Note: "Prices vary by season, date and guest count."
 
+### 6.6a Services (#services)
+- Two parts: **Events we host** and **Add-on services**.
+- Events: Wedding, Reception and Engagement, Birthday, Corporate and Official Parties, Social Gatherings. Large photo rows alternating image left and right, each with one line, 3-4 plain bullet features, and an "Enquire for <event>" text button that opens the form with the event type prefilled.
+- Add-ons (decor, catering, DJ and sound, photography, lighting): a simple two-column list with thin dividers, no boxed cards.
+- Copy rule: facts only, e.g. "Corporate events: seats 300 theatre style, projector and sound system available".
+
+### 6.6b Menu (#menu)
+- Category tabs (Snacks, Main Course, Rice and Breads, Chinese, Desserts, Beverages, Live Counters) and a Veg / Non-veg / All toggle.
+- Items as a clean two-column text list with the standard veg marker (green square dot) or non-veg marker (red/brown triangle dot). One photo for the active category.
+- "View full menu" goes to /menu. "Download menu PDF" shows only if a PDF is uploaded.
+- Note under the list: "Menus can be customised. Tasting available on request."
+```
+ Snacks | Main Course | Rice | Chinese | Desserts
+ [All] [Veg] [Non-veg]
+ (green) Paneer Tikka          (red) Chicken Seekh Kebab
+ (green) Hara Bhara Kebab      (red) Fish Fingers
+```
+
+### 6.6c 360 virtual tour (#tour)
+- Full-width viewer, 16:9 on desktop and 4:5 on mobile, with a short line: "Look around the venue. Drag to rotate."
+- Scene chips below the viewer (Main Lawn, Stage, Dining, Rooms). Hotspot arrows jump between scenes, info markers show short facts.
+- Controls: fullscreen, zoom, optional gyroscope on mobile. Loading state with a blurred thumbnail. Lazy load the viewer only when the section is near the viewport.
+- If WebGL or the viewer fails, show the first panorama as a static image with a "View photos" button. Hide the section when no scenes exist.
+
+### 6.6d Package details drawer
+- On each package card, "View details" opens a drawer (bottom sheet on mobile) with grouped inclusions (for example Snacks, Dinner, Dessert, Extras), price unit (per plate or per event), guest range, and an "Enquire for this package" button that prefills the form.
+
 ### 6.7 Availability calendar
 - Month view, swipe between months
 - Legend: Green = Available, Red = Booked, Orange = Tentative
@@ -127,6 +154,9 @@ Two columns on desktop, stacked on mobile:
 | Page | Content |
 |---|---|
 | `/gallery` | Full gallery with filters |
+| `/services` | Events hosted and add-on services in detail, each with an enquiry button |
+| `/menu` | Full menu with category and veg filters, PDF download |
+| `/tour` | Full-screen 360 virtual tour |
 | `/packages` | Detailed package comparison |
 | `/contact` | Form, map, details |
 | `/thank-you` | Confirmation, WhatsApp continue button, next steps |
@@ -172,8 +202,8 @@ Two columns on desktop, stacked on mobile:
 - Include: entrance, lawn from the stage, mandap, dining, rooms, parking, decorated event
 - No watermarks of other brands, no blurry or dark images
 
-## 13. UI revamp via Stitch (planned, after MVP works)
-- Generate home page directions in Stitch (mobile first), choose one, then export DESIGN.md with the Stitch MCP design-md skill.
-- DESIGN.md in the repo root becomes the source of truth and overrides the tokens in section 2 and 3 where they differ.
-- Keep: section order, data wiring, accessibility rules, performance targets. Change: layout, imagery treatment, typography, spacing, component styling.
-- Rebuild one section at a time and compare with the Stitch screen on a phone before moving on.
+## 13. UI revamp via Stitch (Phase 3.5 Active)
+- **Active Direction:** Royal Heritage Editorial (Stitch Screen `3053ee8a42c14761a9f37640258f2bda`, Project `2051165632570147684`).
+- [DESIGN.md](file:///c:/Users/varus/OneDrive/Desktop/marriage-lawn/DESIGN.md) in the repository root is the active source of truth for color tokens, typography, radii (0px), spacing, and component specifications, overriding section 2 & 3 tokens.
+- **Key Tenets:** Ivory (`#FDFBF7`), Royal Maroon (`#6B1426`), Antique Gold (`#B8860B`), Hairline borders (`#E6DFC8`), 0px radius, zero gradients, zero glassmorphism, zero emojis.
+- Rebuild sections incrementally against the Stitch screen, maintaining all data wiring, accessibility, and performance guarantees.

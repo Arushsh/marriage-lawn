@@ -44,6 +44,45 @@ Visible reviews.
 ### GET `/faqs/`
 FAQ list.
 
+### GET `/services/?kind=event|addon`
+Visible services ordered by `order`. Fields: `id, title, slug, kind, event_type, short_description, description, features, image, icon`.
+
+### GET `/menu/`
+All visible categories with their items in one response (menus are small).
+```json
+{
+  "pdf_url": "https://...",
+  "categories": [
+    {
+      "name": "Snacks", "slug": "snacks", "image": "https://...",
+      "items": [
+        {"id": 1, "name": "Paneer Tikka", "description": "", "is_veg": true, "is_popular": true},
+        {"id": 2, "name": "Chicken Seekh Kebab", "is_veg": false}
+      ]
+    }
+  ]
+}
+```
+Supports `?veg=1` to return only vegetarian items.
+
+### GET `/tour/`
+Returns scenes with hotspots. Empty list if the tour is disabled or has no scenes.
+```json
+{
+  "enabled": true,
+  "scenes": [
+    {
+      "id": 1, "title": "Main Lawn", "panorama": "https://...", "thumbnail": "https://...",
+      "initial_yaw": 0, "initial_pitch": 0,
+      "hotspots": [
+        {"label": "Stage", "target_scene": 2, "yaw": 1.2, "pitch": -0.1},
+        {"label": "Parking entrance", "info_text": "Parking for 120 cars", "yaw": 3.0, "pitch": 0}
+      ]
+    }
+  ]
+}
+```
+
 ### GET `/availability/?start=2026-11-01&end=2026-12-31`
 Returns only non-available dates.
 ```json
@@ -64,6 +103,7 @@ Request:
   "phone": "9876543210",
   "email": "",
   "event_type": "wedding",
+  "package": 2,            // optional package id
   "event_date": "2026-11-21",
   "guest_count": "500-800",
   "message": "Need rooms for 10 guests",

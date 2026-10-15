@@ -60,6 +60,10 @@ Families search Google and Instagram for wedding venues, compare 3-5 options, an
 | F-14 | Email notification to owner on every new enquiry | Must |
 | F-15 | SEO basics: meta tags, Open Graph, sitemap, robots, LocalBusiness schema markup | Must |
 | F-16 | Config-driven branding (name, colors, logo, contact, hours) via `SiteSettings` | Must |
+| F-17 | Services section: events hosted (wedding, reception/engagement, birthday, corporate and official parties, social gatherings) and add-on services (decor, catering, DJ/sound, photography, lighting). Each opens an enquiry with the event type prefilled | Must |
+| F-18 | Menu section: categories (snacks, main course, rice and breads, Chinese, desserts, beverages, live counters), veg/non-veg filter with standard markers, /menu page, optional PDF menu download | Must |
+| F-19 | 360 degree virtual tour: scenes (lawn, stage, dining, rooms, entrance) with navigation hotspots, mobile gyroscope option, falls back to gallery if no tour exists | Must |
+| F-19a | Package details drawer with grouped inclusions, price unit (per plate or per event) and package selection carried into the enquiry form | Must |
 
 ### Phase 2 (after first client signs)
 | ID | Requirement |
@@ -73,6 +77,7 @@ Families search Google and Instagram for wedding venues, compare 3-5 options, an
 | F-26 | Vendor partners page (decorators, caterers, DJ, photographers) |
 | F-27 | Analytics dashboard (visits, enquiries, sources) |
 | F-28 | Multi-venue support (one account, several halls) |
+| F-29 | Interactive 3D layout planner (Three.js / React Three Fiber): stage, round tables, seating by guest count. Needs a modelled lawn, so only after a client asks |
 
 ### Out of scope (for now)
 - Full marketplace of multiple lawns
