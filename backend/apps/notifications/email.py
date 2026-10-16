@@ -81,3 +81,44 @@ def send_enquiry_notification(enquiry) -> None:
     except Exception as exc:
         # Do not let email failure surface to the visitor
         logger.error("Failed to send enquiry notification for #%s: %s", enquiry.pk, exc)
+
+
+def send_booking_confirmation_email(booking) -> None:
+    """Send confirmation email to the customer and owner upon verified payment."""
+    recipients = []
+    notify_email = getattr(settings, "OWNER_NOTIFY_EMAIL", "")
+    if notify_email:
+        recipients.append(notify_email)
+    if booking.customer_email:
+        recipients.append(booking.customer_email)
+
+    if not recipients:
+        return
+
+    subject = f"Booking Confirmed: {booking.booking_reference} - {booking.hall.name}"
+    body = (
+        f"Dear {booking.customer_name},\n\n"
+        f"Your booking for {booking.hall.name} has been CONFIRMED!\n\n"
+        f"Booking Reference : {booking.booking_reference}\n"
+        f"Event Date        : {booking.event_date.strftime('%d %B %Y')}\n"
+        f"Slot              : {booking.get_slot_display()}\n"
+        f"Package           : {booking.package.name if booking.package else 'Standard Venue Hire'}\n"
+        f"Guests            : {booking.guest_count}\n"
+        f"Total Amount      : ₹{booking.base_amount}\n"
+        f"Advance Paid      : ₹{booking.paid_amount}\n"
+        f"Balance Due       : ₹{booking.balance_amount}\n\n"
+        f"Thank you for choosing us for your special day!\n"
+    )
+
+    try:
+        send_mail(
+            subject=subject,
+            message=body,
+            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "webmaster@localhost"),
+            recipient_list=recipients,
+            fail_silently=True,
+        )
+        logger.info("Booking confirmation email sent for %s", booking.booking_reference)
+    except Exception as exc:
+        logger.error("Failed to send booking confirmation email: %s", exc)
+

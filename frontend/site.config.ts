@@ -39,7 +39,7 @@ export const fallbackSiteSettings: SiteSettings = {
   primary_color: defaultTheme.primary,
   accent_color: defaultTheme.accent,
   logo: "",
-  hero_image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1600&q=80",
+  hero_image: "/palace-exterior.jpg",
   hero_video_url: "",
   meta_title: "Shree Palace Lawn | Best Marriage Lawn & Banquet Hall in Prayagraj",
   meta_description:

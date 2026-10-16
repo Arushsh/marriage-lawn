@@ -32,8 +32,13 @@ def api_root_view(request):
         ],
     })
 
+from apps.dashboard.views import admin_dashboard_view
+
 urlpatterns = [
     path("", api_root_view, name="api-root-index"),
+
+    # Executive Operations Dashboard
+    path("private-admin/dashboard/", admin_dashboard_view, name="admin-executive-dashboard"),
 
     # Admin – non-default path for security
     path("private-admin/", admin.site.urls),

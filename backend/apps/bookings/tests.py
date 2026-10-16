@@ -120,3 +120,109 @@ class AvailabilityViewTests(TestCase):
         response = self.client.get(self.url, {"start": today.isoformat(), "end": end})
         for date_obj in response.data["dates"]:
             self.assertNotIn("note", date_obj)
+
+
+from apps.venue.models import Hall, Package
+from apps.bookings.models import Booking
+from apps.bookings.services import (
+    BookingReservationService,
+    VerifiedPaymentService,
+    BookingConflictError,
+    PaymentVerificationError,
+)
+from decimal import Decimal
+
+
+class OnlineBookingTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.client = APIClient()
+        self.hall = Hall.objects.create(
+            name="Main Grand Lawn",
+            seating_capacity=1000,
+            floating_capacity=1500,
+            is_ac=False,
+            order=1,
+        )
+        self.pkg = Package.objects.create(
+            name="Deluxe Wedding Package",
+            price_from=Decimal("75000.00"),
+            price_unit="per_event",
+            order=1,
+        )
+        self.target_date = datetime.date.today() + datetime.timedelta(days=45)
+
+    def test_booking_creation_and_pricing(self):
+        booking = BookingReservationService.create_booking(
+            customer_name="Amit Verma",
+            customer_phone="9876543210",
+            customer_email="amit@example.com",
+            hall_id=self.hall.pk,
+            package_id=self.pkg.pk,
+            event_date=self.target_date,
+            slot="full_day",
+            guest_count=500,
+        )
+        self.assertEqual(booking.status, Booking.STATUS_PENDING)
+        self.assertEqual(booking.base_amount, Decimal("90000.00"))  # 75000 * 1.20 for full day
+        self.assertEqual(booking.advance_amount, Decimal("27000.00"))  # 30% of 90000
+
+    def test_booking_slot_conflict_prevention(self):
+        # Create first booking
+        BookingReservationService.create_booking(
+            customer_name="Customer 1",
+            customer_phone="9876543210",
+            customer_email="cust1@example.com",
+            hall_id=self.hall.pk,
+            package_id=self.pkg.pk,
+            event_date=self.target_date,
+            slot="full_day",
+        )
+        # Attempt duplicate slot booking on same date
+        with self.assertRaises(BookingConflictError):
+            BookingReservationService.create_booking(
+                customer_name="Customer 2",
+                customer_phone="9876543211",
+                customer_email="cust2@example.com",
+                hall_id=self.hall.pk,
+                package_id=self.pkg.pk,
+                event_date=self.target_date,
+                slot="full_day",
+            )
+
+    def test_verified_payment_and_confirmation(self):
+        booking = BookingReservationService.create_booking(
+            customer_name="Karan Johar",
+            customer_phone="9876543210",
+            customer_email="karan@example.com",
+            hall_id=self.hall.pk,
+            package_id=self.pkg.pk,
+            event_date=self.target_date,
+            slot="morning",
+        )
+        # Test signature verification failure
+        with self.assertRaises(PaymentVerificationError):
+            VerifiedPaymentService.verify_and_confirm_payment(
+                booking=booking,
+                amount=booking.advance_amount,
+                provider="mock",
+                order_id="order_123",
+                payment_id="pay_123",
+                signature="invalid_tampered_sig",
+            )
+
+        # Test valid signature verification
+        payment = VerifiedPaymentService.verify_and_confirm_payment(
+            booking=booking,
+            amount=booking.advance_amount,
+            provider="mock",
+            order_id="order_123",
+            payment_id="pay_123",
+            signature="mock_sig_valid",
+        )
+        booking.refresh_from_db()
+        self.assertTrue(payment.is_verified)
+        self.assertEqual(booking.status, Booking.STATUS_CONFIRMED)
+        self.assertEqual(booking.paid_amount, booking.advance_amount)
+        self.assertTrue(AvailabilityDate.objects.filter(date=self.target_date, status="booked").exists())
+

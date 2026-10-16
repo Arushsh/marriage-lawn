@@ -17,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # ─── Core ─────────────────────────────────────────────────────────────────────
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
@@ -50,11 +50,24 @@ INSTALLED_APPS = [
     "apps.media",
     "apps.bookings",
     "apps.notifications",
+    "apps.chatbot",
+    "apps.voice_calling",
+    "apps.dashboard",
 ]
 
 # ─── Middleware ────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+]
+
+# WhiteNoise for production static files on Render (graceful fallback if not installed)
+try:
+    import whitenoise  # noqa: F401
+    MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+except ImportError:
+    pass
+
+MIDDLEWARE.extend([
     "corsheaders.middleware.CorsMiddleware",          # must be before CommonMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -62,7 +75,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-]
+])
 
 ROOT_URLCONF = "config.urls"
 
@@ -112,6 +125,12 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+try:
+    import whitenoise  # noqa: F401
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+except ImportError:
+    pass
+
 # ─── Media / Cloudinary ───────────────────────────────────────────────────────
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
@@ -140,10 +159,10 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "100/hour",
-        "user": "1000/hour",
+        "anon": "10000/hour" if DEBUG else "3000/hour",
+        "user": "50000/hour" if DEBUG else "10000/hour",
         # Custom scopes (applied per view)
-        "enquiry": "5/hour",
+        "enquiry": "100/hour" if DEBUG else "10/hour",
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 24,
@@ -156,6 +175,13 @@ CORS_ALLOWED_ORIGINS: list[str] = [
     if o.strip()
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Trusted Origins (required for Django 4/5 admin and POST endpoints on Render / Vercel)
+CSRF_TRUSTED_ORIGINS: list[str] = [
+    o.strip()
+    for o in os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:3000,http://127.0.0.1:8000").split(",")
+    if o.strip()
+]
 
 # ─── Email ────────────────────────────────────────────────────────────────────
 if DEBUG:
@@ -198,6 +224,7 @@ JAZZMIN_SETTINGS = {
     "copyright": "Arush Vishwakarma",
     "search_model": ["bookings.Enquiry"],
     "topmenu_links": [
+        {"name": "Executive Dashboard", "url": "/private-admin/dashboard/", "icon": "fas fa-chart-line"},
         {"name": "View Site", "url": "/api/v1/site/", "new_window": True},
     ],
     "show_sidebar": True,
@@ -215,6 +242,12 @@ JAZZMIN_SETTINGS = {
         "media.VideoLink": "fas fa-video",
         "bookings.AvailabilityDate": "fas fa-calendar-alt",
         "bookings.Enquiry": "fas fa-envelope",
+        "bookings.Booking": "fas fa-receipt",
+        "chatbot.ChatbotFAQ": "fas fa-robot",
+        "chatbot.ChatConversationLog": "fas fa-comments",
+        "voice_calling.CallScript": "fas fa-scroll",
+        "voice_calling.CallLog": "fas fa-phone-alt",
+        "voice_calling.ContactOptOut": "fas fa-user-slash",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",

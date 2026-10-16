@@ -39,7 +39,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     // Royal Heritage Editorial: 0px radius, 44px+ tap target, tracked uppercase, gold hairline accents
     const baseStyles =
-      "inline-flex items-center justify-center font-semibold text-xs tracking-[0.14em] uppercase whitespace-nowrap rounded-none select-none cursor-pointer transition-colors duration-150 " +
+      "inline-flex items-center justify-center font-semibold text-xs tracking-[0.14em] border border-2 rounded-xl uppercase whitespace-nowrap select-none cursor-pointer transition-colors duration-150 " +
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 " +
       "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
 
@@ -78,7 +78,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {!isLoading && leftIcon && (
           <span className="inline-flex shrink-0 items-center justify-center">{leftIcon}</span>
         )}
-        {children && <span className="truncate">{children}</span>}
+        {children && (
+          <span className="inline-flex items-center gap-2 truncate whitespace-nowrap">
+            {children}
+          </span>
+        )}
         {!isLoading && rightIcon && (
           <span className="inline-flex shrink-0 items-center justify-center">{rightIcon}</span>
         )}

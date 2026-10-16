@@ -28,7 +28,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ site }) => {
                 <Image
                   src={
                     site.hero_image ||
-                    "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1200&q=80"
+                    "/palace-exterior.jpg"
                   }
                   alt={`Photographic view of ${site.venue_name}`}
                   fill

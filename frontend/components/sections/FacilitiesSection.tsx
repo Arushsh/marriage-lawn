@@ -78,10 +78,10 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
                           (hall.image && hall.image.trim())
                             ? hall.image
                             : idx === 0
-                            ? "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=800&q=80"
+                            ? "/palace-colonnade.jpg"
                             : idx === 1
-                            ? "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=800&q=80"
-                            : "https://images.unsplash.com/photo-1478146896981-b80fe463b330?auto=format&fit=crop&w=800&q=80"
+                            ? "/palace-hall.jpg"
+                            : "/palace-lawn.jpg"
                         }
                         alt={hall.name}
                         fill

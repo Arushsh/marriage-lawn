@@ -32,21 +32,30 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        from apps.venue.models import SiteSettings, Hall, Facility, Package, Review, FAQ
+        from apps.venue.models import SiteSettings, Hall, Facility, Package, Review, FAQ, MenuCategory, MenuItem, Service
         from apps.media.models import GalleryImage, VideoLink
-        from apps.bookings.models import AvailabilityDate
+        from apps.bookings.models import AvailabilityDate, Booking
+        from apps.chatbot.models import ChatbotFAQ
+        from apps.voice_calling.models import CallScript, CallLog
 
         if options["flush"]:
             self.stdout.write("Flushing existing demo data…")
-            SiteSettings.objects.all().delete()
-            Hall.objects.all().delete()
-            Facility.objects.all().delete()
-            Package.objects.all().delete()
-            GalleryImage.objects.all().delete()
-            VideoLink.objects.all().delete()
-            Review.objects.all().delete()
-            FAQ.objects.all().delete()
+            CallLog.objects.all().delete()
+            CallScript.objects.all().delete()
+            ChatbotFAQ.objects.all().delete()
+            Booking.objects.all().delete()
             AvailabilityDate.objects.all().delete()
+            MenuItem.objects.all().delete()
+            MenuCategory.objects.all().delete()
+            Service.objects.all().delete()
+            FAQ.objects.all().delete()
+            Review.objects.all().delete()
+            VideoLink.objects.all().delete()
+            GalleryImage.objects.all().delete()
+            Package.objects.all().delete()
+            Facility.objects.all().delete()
+            Hall.objects.all().delete()
+            SiteSettings.objects.all().delete()
 
         # ── SiteSettings ────────────────────────────────────────────────────
         if not SiteSettings.objects.exists():
@@ -281,6 +290,109 @@ class Command(BaseCommand):
             FAQ.objects.get_or_create(question=question, defaults={"answer": answer, "order": order})
         self.stdout.write(self.style.SUCCESS("✓ FAQs (8)"))
 
+        # ── Menu Categories & Items ─────────────────────────────────────────
+        menu_structure = [
+            (
+                "Starters & Hors d'Oeuvres",
+                "starters",
+                "Grand welcome appetizers, tandoori grills, and live royal stations.",
+                [
+                    ("Paneer Tikka Angara", "Chargrilled cottage cheese marinated in hung curd, Kashmiri deggi mirch, and royal spices.", True, True),
+                    ("Dahi Ke Sholay", "Crispy bread rolls stuffed with hung spiced yogurt, bell peppers, and fresh coriander.", True, False),
+                    ("Crispy Corn & Water Chestnut", "Wok-tossed golden corn kernels and water chestnuts with cracked pepper and scallions.", True, False),
+                    ("Galouti Kebab on Mini Sheermal", "Melt-in-mouth smoked lamb patties infused with 32 royal spices, served on saffron sheermal.", False, True),
+                    ("Murgh Malai Tikka", "Tender chicken suprêmes marinated in rich clotted cream, cashew purée, and green cardamom.", False, False),
+                    ("Amritsari Fish Fingers", "Crispy spiced river sole fillets tossed in carom seeds and lemon herb seasoning.", False, False),
+                ],
+            ),
+            (
+                "Royal Main Course",
+                "main-course",
+                "Slow-simmered Awadhi, Mughlai, and North Indian curries cooked in handis.",
+                [
+                    ("Paneer Butter Masala Royal", "Fresh cottage cheese simmered in a velvety tomato-cashew satin gravy with churned butter.", True, True),
+                    ("Dal Makhani Bukhara", "Slow-cooked black urad lentils simmered overnight with pure desi ghee and vine-ripened tomatoes.", True, True),
+                    ("Subz Dum Handi Diwani", "Seasonal baby vegetables and lotus stem braised with whole roasted spices in a sealed clay pot.", True, False),
+                    ("Awadhi Murgh Dum Biryani", "Fragrant long-grain aged basmati rice layered with succulent chicken, saffron milk, and kewra.", False, True),
+                    ("Kashmiri Mutton Rogan Josh", "Tender goat shanks braised in an authentic Kashmiri aromatic red gravy with ratan jot.", False, True),
+                    ("Murgh Lababdar", "Tandoori chicken chunks tossed with diced onions, tomatoes, and crushed coriander seeds.", False, False),
+                ],
+            ),
+            (
+                "Royal Breads & Grains",
+                "breads-grains",
+                "Freshly baked tandoori breads, saffron sheermals, and artisanal rice dishes.",
+                [
+                    ("Lucknowi Saffron Sheermal", "Traditional saffron-infused sweetened royal flatbread baked to golden perfection in the tandoor.", True, True),
+                    ("Amritsari Chur Chur Naan", "Multi-layered flaky tandoor bread stuffed with spiced cottage cheese and potatoes, crushed with desi ghee.", True, False),
+                    ("Kashmiri Pulao", "Fragrant basmati rice gently tossed with caramelized dry fruits, walnuts, cashews, and saffron.", True, False),
+                    ("Pudina Laccha Paratha", "Layered whole wheat bread dusted with garden-fresh mint leaves and roasted carom seeds.", True, False),
+                ],
+            ),
+            (
+                "Palatial Desserts",
+                "desserts",
+                "Traditional halwas, chilled kulfis, and royal milk sweets prepared fresh.",
+                [
+                    ("Royal Shahi Tukda", "Ghee-crisped bread steeped in saffron sugar syrup, layered with thick condensed rabdi and silver leaf.", True, True),
+                    ("Kesar Badam Malpua with Rabdi", "Fluffy syrup-soaked sweet pancakes served with chilled saffron-pistachio rabdi.", True, True),
+                    ("Moong Dal Halwa Royal", "Slow-roasted split yellow lentils in pure desi ghee, garnished with toasted almond slivers and cardamom.", True, False),
+                    ("Angoori Rasmalai", "Delicate cottage cheese dumplings floating in chilled saffron-pistachio infused milk.", True, True),
+                ],
+            ),
+            (
+                "Mocktails & Beverages",
+                "beverages",
+                "Refreshing signature welcome drinks, fruit elixirs, and traditional thandai.",
+                [
+                    ("Shree Royal Rose Sharbath", "Chilled organic damask rose nectar infused with sweet basil seeds and edible silver shimmer.", True, False),
+                    ("Spiced Jamun Shots", "Cold-pressed black plum nectar spiced with rock salt and toasted cumin, served chilled.", True, True),
+                    ("Virgin Blue Lagoon", "Sparkling citrus mocktail with blue curaçao syrup, fresh lime, and crushed mint.", True, False),
+                    ("Kesar Badam Thandai", "Rich ceremonial milk blended with pounded almonds, fennel, black pepper, and pure saffron.", True, True),
+                ],
+            ),
+        ]
+
+        for cat_order, (cat_name, cat_slug, cat_desc, items) in enumerate(menu_structure, start=1):
+            category, _ = MenuCategory.objects.get_or_create(
+                slug=cat_slug,
+                defaults={"name": cat_name, "description": cat_desc, "order": cat_order},
+            )
+            for item_order, (item_name, item_desc, is_veg, is_pop) in enumerate(items, start=1):
+                MenuItem.objects.get_or_create(
+                    category=category,
+                    name=item_name,
+                    defaults={
+                        "description": item_desc,
+                        "is_veg": is_veg,
+                        "is_popular": is_pop,
+                        "order": item_order,
+                        "is_visible": True,
+                    },
+                )
+        self.stdout.write(self.style.SUCCESS("✓ Catering Menu (5 Categories, 24 Dishes seeded)"))
+
+        # ── Venue Services & Add-ons ────────────────────────────────────────
+        services_data = [
+            ("Royal Elephant & Vintage Car Entry", "royal-entry", "addon", "Royal procession arrival for bride and groom with vintage car or caparisoned elephant.", ["Red carpet royal aisle", "Rose petal cannons", "Traditional Dhol & Shehnai accompaniment"]),
+            ("Vedic Mandap & Floral Decor", "mandap-decor", "addon", "Bespoke sacred mandap crafted with fresh marigold, jasmine, and exotic orchids.", ["Grand 4-pillar Vedic setup", "Illuminated floral backdrop", "Havankund and brass samagri setup"]),
+            ("Grand Fireworks & Pyrotechnics", "fireworks-display", "addon", "Spectacular synchronized cold pyro fountains and sky fireworks for Varmala.", ["Cold pyro entrance sparklers", "Sky lantern release", "Stage CO2 jet fountains"]),
+        ]
+        for s_order, (s_title, s_slug, s_kind, s_desc, s_feat) in enumerate(services_data, start=1):
+            Service.objects.get_or_create(
+                slug=s_slug,
+                defaults={
+                    "title": s_title,
+                    "kind": s_kind,
+                    "short_description": s_desc,
+                    "description": s_desc,
+                    "features": s_feat,
+                    "order": s_order,
+                    "is_visible": True,
+                },
+            )
+        self.stdout.write(self.style.SUCCESS("✓ Venue Services & Addons (3 seeded)"))
+
         # ── Sample Availability Dates ───────────────────────────────────────
         today = datetime.date.today()
         booked_offsets    = [7, 14, 21, 28, 35, 56]
@@ -295,6 +407,162 @@ class Command(BaseCommand):
             AvailabilityDate.objects.get_or_create(date=date, defaults={"status": "tentative", "note": "Demo tentative"})
 
         self.stdout.write(self.style.SUCCESS(f"✓ Availability dates (6 booked, 3 tentative — relative to {today})"))
+
+        # ── Chatbot FAQs with Keywords ──────────────────────────────────────
+        chatbot_faqs = [
+            (
+                "What is your maximum guest capacity?",
+                "Our Main Lawn accommodates up to 1,500 floating guests. The Royal Banquet Hall seats 300 guests comfortably in air-conditioned luxury.",
+                "capacity, guest, guests, people, how many, lawn size, banquet, hall",
+                "capacity",
+                1,
+            ),
+            (
+                "How much advance is required to block a wedding date?",
+                "We require a 30% advance of the estimated package cost to block and reserve your chosen date. The remaining balance is payable 7 days prior to the event.",
+                "advance, payment, policy, block, deposit, percentage, token",
+                "booking",
+                2,
+            ),
+            (
+                "Until what time is music and DJ allowed?",
+                "As per local municipal and noise regulations, DJ and high-decibel music are permitted until 12:00 midnight.",
+                "dj, music, midnight, loudspeakers, noise, timing, till what time",
+                "timing",
+                3,
+            ),
+            (
+                "Can we bring our own outside caterer or decorator?",
+                "Yes! You are welcome to bring your own empanelled caterer or decorator. We also offer curated in-house royal catering and decor packages.",
+                "catering, food, caterer, outside food, kitchen, cooking, menu, non veg",
+                "catering",
+                4,
+            ),
+            (
+                "Are air-conditioned rooms and bridal suites available?",
+                "Yes, we provide 12 fully air-conditioned guest rooms and a private bridal dressing suite with dedicated vanity mirrors on the premises.",
+                "rooms, bridal room, guest room, stay, overnight, accommodation, dressing",
+                "parking_rooms",
+                5,
+            ),
+            (
+                "How many cars can fit in the parking area?",
+                "Our secured on-site parking can easily accommodate over 150 vehicles with valet attendants and CCTV monitoring.",
+                "parking, car, cars, vehicle, parking space, valet",
+                "parking_rooms",
+                6,
+            ),
+            (
+                "Is power backup provided in case of electricity cuts?",
+                "Yes, we have 100% heavy-duty generator power backup that seamlessly powers all air-conditioners, stage lights, and DJ systems without interruption.",
+                "generator, power backup, electricity, power cut, light",
+                "general",
+                7,
+            ),
+            (
+                "What packages and price ranges do you offer?",
+                "We offer Basic (₹40k), Standard (₹75k), and bespoke Grand Royalty packages. Type 'show packages' or check our Pricing section to view full inclusions.",
+                "package, packages, price, pricing, cost, rate, budget, per plate",
+                "pricing",
+                8,
+            ),
+        ]
+        for q, a, kw, tag, ord in chatbot_faqs:
+            ChatbotFAQ.objects.get_or_create(
+                question=q,
+                defaults={
+                    "answer": a,
+                    "keywords": kw,
+                    "intent_tag": tag,
+                    "order": ord,
+                    "is_active": True,
+                },
+            )
+        self.stdout.write(self.style.SUCCESS("✓ Chatbot FAQs with keyword intents (8)"))
+
+        # ── Predefined AI Voice Calling Scripts (Hindi) ────────────────────────
+        scripts = [
+            (
+                "New Lead Welcome & Qualification (Hindi)",
+                "new_enquiry",
+                "नमस्ते {customer_name} जी! {venue_name}, {city} में आपका हार्दिक स्वागत है। हमें {event_date} को आपके {event_type} के लिए पूछताछ प्राप्त हुई है। व्हाट्सएप पर तस्वीरें और संपूर्ण विवरण पाने के लिए 1 दबाएं, या भविष्य में कॉल न पाने के लिए 9 दबाएं।",
+            ),
+            (
+                "Booking Advance Pending Reminder (Hindi)",
+                "booking_pending",
+                "नमस्ते {customer_name} जी! {venue_name} में {event_date} के लिए आपकी बुकिंग का एडवांस भुगतान अभी प्रतीक्षित है। अपनी मनपसंद तारीख सुरक्षित करने के लिए कृपया ऑनलाइन एडवांस पूरा करें। बुकिंग सहायता के लिए 1 दबाएं।",
+            ),
+            (
+                "Booking Confirmed Warm Welcome (Hindi)",
+                "booking_confirmed",
+                "नमस्ते {customer_name} जी! बहुत-बहुत बधाई! {venue_name} में {event_date} के लिए आपकी शादी की बुकिंग सफलतापूर्वक कन्फर्म हो चुकी है! हमारे वेडिंग मैनेजर जल्द ही आपसे संपर्क करेंगे। धन्यवाद!",
+            ),
+            (
+                "Instant AI Callback Request (Hindi)",
+                "instant_callback",
+                "नमस्ते {customer_name} जी! मैं {venue_name}, {city} से आपकी एआई वेडिंग साथी बोल रही हूँ। हमें {event_date} को आपके शुभ विवाह के लिए तत्काल कॉल का अनुरोध प्राप्त हुआ है। हमारे भव्य शाही लॉन और वातानुकूलित बैंक्वेट हॉल उपलब्ध हैं। व्हाट्सएप पर हमारा शाही ब्रोशर और कैटरिंग मेन्यू तुरंत पाने के लिए कीपैड पर 1 दबाएं, या कॉल समाप्त करने के लिए 9 दबाएं।",
+            ),
+        ]
+        for name, trig, tpl in scripts:
+            CallScript.objects.update_or_create(
+                trigger_event=trig,
+                defaults={"name": name, "script_template": tpl, "is_active": True},
+            )
+        self.stdout.write(self.style.SUCCESS("✓ AI Voice Calling Script Templates in Hindi (4)"))
+
+        # ── Sample Confirmed Booking & AI Call Log ──────────────────────────
+        main_lawn = Hall.objects.filter(name="Main Lawn").first() or Hall.objects.first()
+        std_pkg = Package.objects.filter(name="Standard Package").first() or Package.objects.first()
+
+        sample_booking, b_created = Booking.objects.get_or_create(
+            booking_reference="BK-DEMO-001",
+            defaults={
+                "customer_name": "Rohan Malhotra",
+                "customer_phone": "9876543210",
+                "customer_email": "rohan@example.com",
+                "hall": main_lawn,
+                "package": std_pkg,
+                "event_type": "wedding",
+                "event_date": today + datetime.timedelta(days=21),
+                "slot": "full_day",
+                "guest_count": 600,
+                "base_amount": 90000.00,
+                "advance_amount": 27000.00,
+                "paid_amount": 27000.00,
+                "balance_amount": 63000.00,
+                "status": "confirmed",
+                "payment_status": "partial_advance",
+                "payment_provider": "mock",
+                "payment_order_id": "order_mock_001",
+                "payment_transaction_id": "txn_mock_001",
+            },
+        )
+        if b_created:
+            from apps.bookings.models import BookingPayment
+            BookingPayment.objects.create(
+                booking=sample_booking,
+                amount=27000.00,
+                provider="mock",
+                order_id="order_mock_001",
+                payment_id="txn_mock_001",
+                signature="mock_sig_demo",
+                is_verified=True,
+            )
+            # Also log sample completed AI call
+            CallLog.objects.create(
+                recipient_name=sample_booking.customer_name,
+                recipient_phone=sample_booking.customer_phone,
+                booking=sample_booking,
+                status="completed",
+                duration_seconds=42,
+                provider="mock",
+                provider_call_id="mock_call_001",
+                rendered_speech=f"Hello Rohan Malhotra, your booking at Shree Palace Lawn for {sample_booking.event_date} is CONFIRMED!",
+                transcript="AI Assistant: Hello Rohan Malhotra, your booking at Shree Palace Lawn is CONFIRMED!\nCustomer: That's great, thank you so much!",
+                recording_url="https://mock-telephony.local/recordings/demo.mp3",
+                dtmf_digits="1",
+            )
+        self.stdout.write(self.style.SUCCESS("✓ Sample Bookings, Payments, and Voice Logs"))
 
         self.stdout.write("")
         self.stdout.write(self.style.SUCCESS(

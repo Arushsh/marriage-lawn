@@ -37,6 +37,7 @@ class AvailabilityView(APIView):
     """
 
     permission_classes = [AllowAny]
+    throttle_classes = []
 
     def get(self, request):
         start_str = request.query_params.get("start")
@@ -137,3 +138,174 @@ class EnquiryCreateView(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+# ─── Online Booking Views ─────────────────────────────────────────────────────
+
+from .models import Booking
+from .serializers import (
+    BookingCreateSerializer,
+    BookingDetailSerializer,
+    PaymentVerificationSerializer,
+)
+from .services import (
+    BookingReservationService,
+    VerifiedPaymentService,
+    BookingConflictError,
+    PaymentVerificationError,
+)
+from decimal import Decimal
+
+
+class BookingCreateView(APIView):
+    """
+    POST /api/v1/bookings/
+    Create a new booking with concurrency safety and computed server pricing.
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = BookingCreateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"error": "validation_error", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        data = serializer.validated_data
+        try:
+            booking = BookingReservationService.create_booking(
+                customer_name=data["customer_name"],
+                customer_phone=data["customer_phone"],
+                customer_email=data.get("customer_email", ""),
+                hall_id=data["hall_id"],
+                package_id=data.get("package_id"),
+                event_type=data.get("event_type", "wedding"),
+                event_date=data["event_date"],
+                slot=data.get("slot", "full_day"),
+                guest_count=data.get("guest_count", 300),
+                customer_notes=data.get("customer_notes", ""),
+                ip_address=_get_client_ip(request),
+                has_voice_consent=data.get("has_voice_consent", True),
+            )
+        except BookingConflictError as conflict_err:
+            return Response(
+                {"error": "slot_conflict", "message": str(conflict_err)},
+                status=status.HTTP_409_CONFLICT,
+            )
+        except Exception as exc:
+            return Response(
+                {"error": "booking_error", "message": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Generate payment session token / mock order
+        order_id = f"order_{booking.booking_reference}"
+
+        return Response(
+            {
+                "message": "Booking reservation initiated. Advance payment required to confirm.",
+                "booking_reference": booking.booking_reference,
+                "base_amount": str(booking.base_amount),
+                "advance_amount": str(booking.advance_amount),
+                "payment_order_id": order_id,
+                "status": booking.status,
+                "event_date": str(booking.event_date),
+                "slot": booking.slot,
+                "hall": booking.hall.name,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class BookingDetailView(APIView):
+    """
+    GET /api/v1/bookings/<reference>/
+    Retrieve booking status and breakdown.
+    """
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, reference):
+        try:
+            booking = Booking.objects.select_related("hall", "package").get(
+                booking_reference=reference
+            )
+        except Booking.DoesNotExist:
+            return Response(
+                {"error": "not_found", "message": "Booking reference not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = BookingDetailSerializer(booking)
+        return Response(serializer.data)
+
+
+class BookingPaymentVerifyView(APIView):
+    """
+    POST /api/v1/bookings/<reference>/verify-payment/
+    Verify gateway HMAC/token and confirm reservation.
+    """
+
+    permission_classes = [AllowAny]
+
+    def post(self, request, reference):
+        try:
+            booking = Booking.objects.get(booking_reference=reference)
+        except Booking.DoesNotExist:
+            return Response(
+                {"error": "not_found", "message": "Booking reference not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = PaymentVerificationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(
+                {"error": "validation_error", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        data = serializer.validated_data
+        amount = Decimal(str(data.get("amount") or booking.advance_amount))
+        provider = data.get("provider") or "mock"
+        signature = data.get("signature") or "mock_sig_verified"
+        order_id = data.get("order_id") or booking.payment_order_id or f"ord_{booking.booking_reference}"
+        payment_id = data.get("payment_id") or f"pay_{booking.booking_reference}"
+
+        try:
+            payment = VerifiedPaymentService.verify_and_confirm_payment(
+                booking=booking,
+                amount=amount,
+                provider=provider,
+                order_id=order_id,
+                payment_id=payment_id,
+                signature=signature,
+                raw_payload=request.data,
+            )
+        except PaymentVerificationError as pve:
+            return Response(
+                {"error": "payment_verification_failed", "message": str(pve)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as exc:
+            return Response(
+                {"error": "payment_processing_error", "message": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {
+                "message": "Payment verified and booking confirmed successfully!",
+                "booking_reference": booking.booking_reference,
+                "status": booking.status,
+                "payment_status": booking.payment_status,
+                "paid_amount": str(payment.amount),
+                "balance_amount": str(booking.balance_amount),
+                "amount_paid": str(payment.amount),
+                "balance_remaining": str(booking.balance_amount),
+            },
+            status=status.HTTP_200_OK,
+        )
+
+

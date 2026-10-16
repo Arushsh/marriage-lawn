@@ -83,7 +83,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
               <div className="relative overflow-hidden bg-black aspect-video max-h-[440px]">
                 {isPlayingVideo ? (
                   <iframe
-                    src={`${primaryVideo.url}${primaryVideo.url.includes("?") ? "&" : "?"}autoplay=1`}
+                    src={`${primaryVideo.url.replace("watch?v=", "embed/")}${primaryVideo.url.includes("?") ? "&" : "?"}autoplay=1`}
                     title={primaryVideo.title || "Venue Video Tour"}
                     className="w-full h-full border-0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -97,15 +97,17 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                     className="w-full h-full relative flex items-center justify-center group cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     aria-label={`Play video: ${primaryVideo.title || "Venue Video Tour"}`}
                   >
-                    {safeImages[0] && (
+                    {safeImages[0]?.image ? (
                       <Image
                         src={safeImages[0].image}
                         alt={primaryVideo.title || "Venue Video Tour"}
                         fill
-                        loading="lazy"
+                        unoptimized
                         sizes="(max-width: 1024px) 100vw, 1280px"
                         className="object-cover opacity-60 group-hover:opacity-75 transition-opacity"
                       />
+                    ) : (
+                      <div className="absolute inset-0 bg-stone-900" />
                     )}
                     <div className="absolute inset-0 bg-stone-950/40 group-hover:bg-stone-950/30 transition-colors" />
 
@@ -176,6 +178,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                       src={image.image}
                       alt={image.alt_text || image.caption || "Wedding venue photograph"}
                       fill
+                      unoptimized
                       loading="lazy"
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 400px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"

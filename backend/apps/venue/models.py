@@ -224,6 +224,7 @@ class MenuItem(models.Model):
     category    = models.ForeignKey(MenuCategory, related_name="items", on_delete=models.CASCADE)
     name        = models.CharField(max_length=120)
     description = models.CharField(max_length=250, blank=True)
+    image       = models.ImageField(upload_to="menu_items/", blank=True, null=True, help_text="Photograph of the dish")
     is_veg      = models.BooleanField(default=True, help_text="True for veg (green), False for non-veg (red)")
     is_popular  = models.BooleanField(default=False)
     order       = models.PositiveSmallIntegerField(default=0)

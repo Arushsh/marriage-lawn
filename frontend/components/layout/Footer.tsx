@@ -64,8 +64,14 @@ export const Footer: React.FC<FooterProps> = ({ site }) => {
               <Link href="/gallery" className="hover:text-accent transition-colors">
                 Photo Portfolio
               </Link>
+              <Link href="/menu" className="hover:text-accent transition-colors">
+                Royal Catering Menu
+              </Link>
               <Link href="/packages" className="hover:text-accent transition-colors">
                 Wedding Packages &amp; Pricing
+              </Link>
+              <Link href="/book" className="hover:text-accent transition-colors">
+                Online Date Booking
               </Link>
               <Link href="/contact" className="hover:text-accent transition-colors">
                 Reserve Date &amp; Location

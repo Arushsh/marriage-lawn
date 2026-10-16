@@ -3,9 +3,14 @@ Django==5.1.4
 djangorestframework==3.15.2
 django-cors-headers==4.4.0
 
+# Production WSGI / Static
+gunicorn==23.0.0
+whitenoise[brotli]==6.8.2
+
 # Database
-psycopg==3.3.6            # pure-Python; add psycopg-binary on Render/Railway (Python ≤3.12)
-dj-database-url==2.3.0    # supports psycopg3 engine
+psycopg==3.2.4
+psycopg-binary==3.2.4        # binary wheel for Linux containers on Render
+dj-database-url==2.3.0       # supports psycopg3 engine
 
 # Auth (kept for Phase 2 JWT, installed now so imports don't break)
 djangorestframework-simplejwt==5.3.1

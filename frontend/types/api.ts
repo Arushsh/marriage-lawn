@@ -27,6 +27,8 @@ export interface SiteSettings {
   logo: string;
   hero_image: string;
   hero_video_url: string;
+  menu_pdf?: string;
+  tour_enabled?: boolean;
   meta_title: string;
   meta_description: string;
 }
@@ -126,3 +128,109 @@ export interface EnquiryResponse {
   whatsapp_prefill: string;
   whatsapp_number: string;
 }
+
+export interface ChatbotResponse {
+  reply: string;
+  intent: string;
+  matched_faq_id: number | null;
+  suggestions: string[];
+  dynamic_data: Record<string, any>;
+}
+
+export interface BookingPayload {
+  customer_name: string;
+  customer_phone: string;
+  customer_email?: string;
+  hall_id: number;
+  package_id?: number | null;
+  event_type?: string;
+  event_date: string;
+  slot?: "full_day" | "morning" | "evening";
+  guest_count?: number;
+  customer_notes?: string;
+  has_voice_consent?: boolean;
+}
+
+export interface MenuItem {
+  id: number;
+  name: string;
+  description: string;
+  image?: string;
+  is_veg: boolean;
+  is_popular: boolean;
+  order: number;
+}
+
+export interface MenuCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  image: string;
+  order: number;
+  items: MenuItem[];
+}
+
+export interface ServiceItem {
+  id: number;
+  title: string;
+  slug: string;
+  kind: "event" | "addon";
+  event_type?: string;
+  short_description: string;
+  description: string;
+  features: string[];
+  image: string;
+  icon: string;
+  order: number;
+}
+
+export interface VoiceCallbackPayload {
+  name: string;
+  phone: string;
+  event_date?: string;
+  guest_count?: number | string;
+  notes?: string;
+}
+
+export interface VoiceCallbackResponse {
+  status: "scheduled" | "opted_out" | "error";
+  message: string;
+  call_log_id?: number;
+  provider?: string;
+  call_status?: string;
+  rendered_speech?: string;
+  transcript?: string;
+}
+
+export interface PaymentVerifyPayload {
+  order_id: string;
+  payment_id: string;
+  signature?: string;
+  amount?: number | string;
+  provider?: string;
+}
+
+export interface PaymentVerifyResponse {
+  message: string;
+  booking_reference: string;
+  status: string;
+  payment_status: string;
+  paid_amount: string;
+  balance_amount: string;
+}
+
+export interface BookingResponse {
+  message: string;
+  booking_reference: string;
+  base_amount: string;
+  advance_amount: string;
+  payment_order_id: string;
+  status: string;
+  event_date: string;
+  slot: string;
+  hall: string;
+}
+
+
+

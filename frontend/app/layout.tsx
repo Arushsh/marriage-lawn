@@ -8,6 +8,8 @@ import { Footer } from "@/components/layout/Footer";
 import { StickyActionBar } from "@/components/layout/StickyActionBar";
 import { FloatingWhatsApp } from "@/components/layout/FloatingWhatsApp";
 import { ThemeInjector } from "@/components/layout/ThemeInjector";
+import { ChatbotWidget } from "@/components/chatbot/ChatbotWidget";
+import { GSAPScrollProvider } from "@/components/animations/GSAPScrollProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -39,7 +41,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${jakarta.variable} scroll-smooth`}
+      className={`${playfair.variable} ${jakarta.variable}`}
     >
       <head>
         <ThemeInjector site={site} />
@@ -58,11 +60,12 @@ export default async function RootLayout({
         </a>
         <Navbar site={site} />
         <main id="main-content" className="flex-1 w-full">
-          {children}
+          <GSAPScrollProvider>{children}</GSAPScrollProvider>
         </main>
         <Footer site={site} />
         <StickyActionBar site={site} />
         <FloatingWhatsApp site={site} />
+        <ChatbotWidget site={site} />
       </body>
     </html>
   );

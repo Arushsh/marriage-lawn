@@ -10,8 +10,8 @@ dist/
 build/
 .eggs/
 .installed.cfg
-lib/
-lib64/
+/lib/
+/lib64/
 
 # ─── Virtual environments ─────────────────────────────────────────────────────
 .venv/
@@ -24,7 +24,8 @@ ENV/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-media/
+# Django media uploads folder
+/backend/media/
 staticfiles/
 
 # ─── Environment variables — NEVER commit real secrets ────────────────────────
@@ -52,3 +53,6 @@ desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# ─── Tools ────────────────────────────────────────────────────────────────────
+.jetro/

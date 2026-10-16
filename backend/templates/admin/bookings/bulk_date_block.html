@@ -1,0 +1,36 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="card card-primary" style="max-width: 650px; margin: 24px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;">
+  <div class="card-header" style="background: #6B1426; color: #fff; padding: 16px 20px;">
+    <h3 class="card-title" style="margin: 0; font-size: 1.25rem;"><i class="fas fa-calendar-check mr-2"></i> Bulk Multi-Row Date Blocking</h3>
+  </div>
+  <form method="post" style="padding: 24px;">
+    {% csrf_token %}
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">
+      Select a date range to automatically insert or update multiple calendar availability records in a single operation.
+    </p>
+
+    {% for field in form %}
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label style="font-weight: 600; display: block; margin-bottom: 6px;">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="color: #6b7280; display: block; margin-top: 4px;">{{ field.help_text }}</small>
+        {% endif %}
+        {% if field.errors %}
+          <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">{{ field.errors }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 16px;">
+      <a href="../" class="btn btn-default" style="padding: 8px 16px; border-radius: 4px; border: 1px solid #d1d5db; background: #fff;">Cancel</a>
+      <button type="submit" class="btn btn-primary" style="background: #6B1426; border-color: #6B1426; color: #fff; padding: 8px 20px; font-weight: 600; border-radius: 4px;">
+        <i class="fas fa-check mr-1"></i> Block Selected Dates
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

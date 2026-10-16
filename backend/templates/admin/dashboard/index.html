@@ -1,0 +1,334 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+<style>
+  .dash-container {
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 20px;
+    border-left: 5px solid #6B1426;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+  }
+  .stat-card.gold { border-left-color: #B8860B; }
+  .stat-card.green { border-left-color: #15803d; }
+  .stat-card.blue { border-left-color: #0284c7; }
+  .stat-card.purple { border-left-color: #7c3aed; }
+
+  .stat-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b7280;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+  }
+  .stat-meta {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 6px;
+  }
+
+  .action-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    background: #fff;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    align-items: center;
+  }
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: background 0.15s;
+  }
+  .action-btn.primary { background: #6B1426; color: #fff; }
+  .action-btn.primary:hover { background: #500d1c; color: #fff; }
+  .action-btn.gold { background: #B8860B; color: #fff; }
+  .action-btn.gold:hover { background: #966d08; color: #fff; }
+  .action-btn.secondary { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+  .action-btn.secondary:hover { background: #e5e7eb; color: #111827; }
+
+  .tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+    gap: 24px;
+  }
+  .panel {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .panel-header {
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .panel-header h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .custom-table th {
+    background: #f9fafb;
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #4b5563;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .custom-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+  }
+  .badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .badge-confirmed { background: #dcfce7; color: #15803d; }
+  .badge-pending { background: #fef3c7; color: #b45309; }
+  .badge-completed { background: #dbeafe; color: #1d4ed8; }
+  .badge-new { background: #f3e8ff; color: #7e22ce; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dash-container">
+
+  <!-- Action Bar -->
+  <div class="action-strip">
+    <strong style="color: #6B1426; margin-right: 12px;"><i class="fas fa-bolt mr-1"></i> Quick Operations:</strong>
+    <a href="/private-admin/bookings/availabilitydate/bulk-block/" class="action-btn primary">
+      <i class="fas fa-layer-group"></i> Bulk Block Dates
+    </a>
+    <a href="/private-admin/bookings/booking/add/" class="action-btn gold">
+      <i class="fas fa-plus-circle"></i> Create Booking
+    </a>
+    <a href="/private-admin/bookings/availabilitydate/" class="action-btn secondary">
+      <i class="fas fa-calendar-alt"></i> Calendar Exceptions
+    </a>
+    <a href="/private-admin/voice_calling/calllog/" class="action-btn secondary">
+      <i class="fas fa-headset"></i> AI Call Logs
+    </a>
+    <a href="/private-admin/chatbot/chatbotfaq/" class="action-btn secondary">
+      <i class="fas fa-robot"></i> Chatbot FAQs
+    </a>
+  </div>
+
+  <!-- Executive Stat Cards -->
+  <div class="stat-grid">
+    <div class="stat-card green">
+      <div class="stat-title">Total Booked Revenue</div>
+      <div class="stat-value">₹{{ metrics.revenue.total_revenue }}</div>
+      <div class="stat-meta">From confirmed & completed reservations</div>
+    </div>
+
+    <div class="stat-card gold">
+      <div class="stat-title">Advance Collected</div>
+      <div class="stat-value">₹{{ metrics.revenue.collected_advance }}</div>
+      <div class="stat-meta">Outstanding balance: ₹{{ metrics.revenue.outstanding_balance }}</div>
+    </div>
+
+    <div class="stat-card blue">
+      <div class="stat-title">Active Bookings</div>
+      <div class="stat-value">{{ metrics.bookings.confirmed }}</div>
+      <div class="stat-meta">{{ metrics.bookings.pending }} pending advance payment</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-title">Website Leads</div>
+      <div class="stat-value">{{ metrics.enquiries.total }}</div>
+      <div class="stat-meta">{{ metrics.enquiries.new }} new leads | {{ metrics.enquiries.conversion_rate }}% conversion</div>
+    </div>
+
+    <div class="stat-card purple">
+      <div class="stat-title">AI Voice Calls</div>
+      <div class="stat-value">{{ metrics.voice_calls.completed }}/{{ metrics.voice_calls.total_calls }}</div>
+      <div class="stat-meta">{{ metrics.voice_calls.completion_rate }}% completed | {{ metrics.voice_calls.opt_outs }} DND opt-outs</div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Tables -->
+  <div class="tables-grid">
+
+    <!-- Recent Bookings -->
+    <div class="panel">
+      <div class="panel-header">
+        <h4><i class="fas fa-receipt mr-2" style="color: #6B1426;"></i> Recent Online Bookings</h4>
+        <a href="/private-admin/bookings/booking/" style="font-size: 12px; color: #0284c7; font-weight: 600;">View All</a>
+      </div>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Reference</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in metrics.recent_bookings %}
+          <tr>
+            <td><strong>{{ b.booking_reference }}</strong></td>
+            <td>{{ b.customer_name }}</td>
+            <td>{{ b.event_date|date:"d M Y" }}</td>
+            <td>₹{{ b.base_amount|floatformat:0 }}</td>
+            <td>
+              {% if b.status == "confirmed" %}
+                <span class="badge badge-confirmed">Confirmed</span>
+              {% elif b.status == "pending_payment" %}
+                <span class="badge badge-pending">Pending</span>
+              {% else %}
+                <span class="badge badge-completed">{{ b.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="text-align:center; color:#9ca3af; padding: 24px;">No bookings recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent Website Enquiries -->
+    <div class="panel">
+      <div class="panel-header">
+        <h4><i class="fas fa-envelope-open-text mr-2" style="color: #B8860B;"></i> Recent Website Enquiries</h4>
+        <a href="/private-admin/bookings/enquiry/" style="font-size: 12px; color: #0284c7; font-weight: 600;">View All</a>
+      </div>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Lead</th>
+            <th>Phone</th>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in metrics.recent_enquiries %}
+          <tr>
+            <td><strong>{{ e.name }}</strong></td>
+            <td>+91{{ e.phone }}</td>
+            <td>{{ e.get_event_type_display }}</td>
+            <td>{{ e.event_date|date:"d M Y"|default:"TBD" }}</td>
+            <td>
+              {% if e.status == "new" %}
+                <span class="badge badge-new">New</span>
+              {% elif e.status == "contacted" %}
+                <span class="badge badge-pending">Contacted</span>
+              {% elif e.status == "booked" %}
+                <span class="badge badge-confirmed">Booked</span>
+              {% else %}
+                <span class="badge">{{ e.status }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="text-align:center; color:#9ca3af; padding: 24px;">No enquiries received yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent AI Voice Calls -->
+    <div class="panel" style="grid-column: 1 / -1;">
+      <div class="panel-header">
+        <h4><i class="fas fa-phone-volume mr-2" style="color: #7c3aed;"></i> Recent AI Automated Phone Calls</h4>
+        <a href="/private-admin/voice_calling/calllog/" style="font-size: 12px; color: #0284c7; font-weight: 600;">View All</a>
+      </div>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Recipient</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Audio Recording</th>
+            <th>Transcript Preview</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in metrics.recent_calls %}
+          <tr>
+            <td><strong>{{ c.recipient_name }}</strong></td>
+            <td>+91{{ c.recipient_phone }}</td>
+            <td>
+              {% if c.status == "completed" %}
+                <span class="badge badge-confirmed">Completed</span>
+              {% elif c.status == "opted_out" %}
+                <span class="badge badge-pending">Opted Out (DND)</span>
+              {% else %}
+                <span class="badge">{{ c.status }}</span>
+              {% endif %}
+            </td>
+            <td>{{ c.duration_seconds }}s</td>
+            <td>
+              {% if c.recording_url %}
+                <a href="{{ c.recording_url }}" target="_blank" style="color:#0284c7; font-weight:600;"><i class="fas fa-play-circle mr-1"></i>Listen</a>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+            <td style="max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              {{ c.transcript|truncatechars:70 }}
+            </td>
+            <td>{{ c.created_at|date:"d M H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" style="text-align:center; color:#9ca3af; padding: 24px;">No AI voice calls dispatched yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -145,7 +145,7 @@ class ServiceAdmin(admin.ModelAdmin):
 class MenuItemInline(admin.TabularInline):
     model = MenuItem
     extra = 2
-    fields = ["name", "is_veg", "is_popular", "order", "is_visible", "description"]
+    fields = ["name", "image", "is_veg", "is_popular", "order", "is_visible", "description"]
 
 
 @admin.register(MenuCategory)
@@ -167,6 +167,7 @@ class MenuItemAdmin(admin.ModelAdmin):
     list_filter   = ["category", "is_veg", "is_popular", "is_visible"]
     list_editable = ["is_veg", "is_popular", "order", "is_visible"]
     search_fields = ["name", "description"]
+    fields        = ["category", "name", "description", "image", "is_veg", "is_popular", "order", "is_visible"]
     ordering      = ["category__order", "order", "name"]
 
 
