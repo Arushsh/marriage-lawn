@@ -12,5 +12,5 @@ pip install -r requirements.txt
 # Collect static files for WhiteNoise
 python manage.py collectstatic --noinput
 
-# Apply database migrations
-python manage.py migrate
+# Run migrations, seed demo data, and ensure admin superuser exists
+python manage.py setup_production
