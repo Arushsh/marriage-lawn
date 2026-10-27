@@ -119,7 +119,7 @@ export default function AdminLeadsPage() {
           {enquiries.map((enquiry) => (
             <React.Fragment key={enquiry.id}>
               <tr
-                className="cursor-pointer hover:bg-surface/60"
+                className="cursor-pointer hover:bg-stone-100/70 transition-colors"
                 onClick={() => setExpandedId(expandedId === enquiry.id ? null : enquiry.id)}
               >
                 <td className="px-4 py-2.5 text-xs text-muted whitespace-nowrap">
@@ -146,7 +146,7 @@ export default function AdminLeadsPage() {
                 </td>
               </tr>
               {expandedId === enquiry.id && (
-                <tr className="bg-surface/40">
+                <tr className="bg-stone-50 border-y border-stone-200">
                   <td colSpan={7} className="px-4 py-4">
                     <LeadDetail enquiry={enquiry} onUpdate={handleUpdate} />
                   </td>

@@ -136,7 +136,7 @@ export default function AdminBookingsPage() {
           {bookings.map((booking) => (
             <React.Fragment key={booking.id}>
               <tr
-                className="cursor-pointer hover:bg-surface/60"
+                className="cursor-pointer hover:bg-stone-100/70 transition-colors"
                 onClick={() => setExpandedId(expandedId === booking.id ? null : booking.id)}
               >
                 <td className="px-4 py-2.5 font-mono text-xs">{booking.booking_reference}</td>
@@ -168,7 +168,7 @@ export default function AdminBookingsPage() {
                 </td>
               </tr>
               {expandedId === booking.id && (
-                <tr className="bg-surface/40">
+                <tr className="bg-stone-50 border-y border-stone-200">
                   <td colSpan={8} className="px-4 py-4">
                     <BookingDetail booking={booking} onUpdate={handleUpdate} />
                   </td>

@@ -180,7 +180,7 @@ function PhotosTab() {
               name="image"
               accept="image/*"
               required
-              className="w-full text-sm text-muted file:mr-3 file:px-3 file:py-2 file:border file:border-accent file:bg-surface file:text-primary file:text-xs file:uppercase file:tracking-wider file:cursor-pointer"
+              className="w-full text-sm text-stone-600 file:mr-3 file:px-3 file:py-2 file:border file:border-stone-300 file:bg-stone-100 file:text-stone-800 file:text-xs file:uppercase file:tracking-wider file:cursor-pointer"
             />
           </Field>
           <div className="grid sm:grid-cols-2 gap-4">

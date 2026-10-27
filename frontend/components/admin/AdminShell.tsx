@@ -122,9 +122,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="space-y-6">
       {NAV_GROUPS.map((group) => (
         <div key={group.title} className="space-y-1.5">
-          <p className="px-3.5 text-[10px] uppercase font-semibold tracking-widest text-[#C5A880]/60">
+          <span className="px-3.5 text-[11px] uppercase font-bold tracking-widest text-[#D4AF37] block">
             {group.title}
-          </p>
+          </span>
           <nav className="space-y-1">
             {group.items.map(({ href, label, icon: Icon }) => {
               const active = href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
@@ -135,20 +135,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                   onClick={() => setMobileNavOpen(false)}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs tracking-wider transition-all duration-200 group ${
                     active
-                      ? "bg-gradient-to-r from-[#C5A880]/20 to-white/5 text-[#F5E6D3] font-medium border-l-2 border-[#C5A880] shadow-xs"
-                      : "text-stone-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent"
+                      ? "bg-gradient-to-r from-[#D4AF37]/25 to-[#7A1528]/40 text-[#FFF8EE] font-semibold border-l-4 border-[#D4AF37] shadow-sm"
+                      : "text-stone-300 hover:text-white hover:bg-white/10 border-l-4 border-transparent"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Icon
                       className={`w-4 h-4 transition-transform duration-200 group-hover:scale-110 ${
-                        active ? "text-[#C5A880]" : "text-stone-400 group-hover:text-stone-200"
+                        active ? "text-[#D4AF37]" : "text-stone-400 group-hover:text-stone-200"
                       }`}
                       strokeWidth={1.75}
                     />
-                    <span>{label}</span>
+                    <span className={active ? "text-[#FFF8EE] font-semibold" : "text-stone-300 group-hover:text-white"}>
+                      {label}
+                    </span>
                   </div>
-                  {active && <ChevronRight className="w-3.5 h-3.5 text-[#C5A880]/70" />}
+                  {active && <ChevronRight className="w-3.5 h-3.5 text-[#D4AF37]" />}
                 </Link>
               );
             })}
@@ -192,7 +194,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           onClick={() => setMobileNavOpen(false)}
         >
           <div
-            className="w-72 h-full bg-[#150308] border-r border-[#C5A880]/20 p-5 overflow-y-auto flex flex-col justify-between"
+            className="w-72 h-full bg-[#150308] text-stone-300 border-r border-[#C5A880]/20 p-5 overflow-y-auto flex flex-col justify-between"
             onClick={(e) => e.stopPropagation()}
           >
             {navContent}
@@ -219,21 +221,21 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 bg-[#140207] border-r border-[#C5A880]/20 z-30 shadow-xl">
+      <aside className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:left-0 lg:w-64 bg-[#140207] text-stone-300 border-r border-[#C5A880]/30 z-30 shadow-xl">
         {/* Estate Branding */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-white/10">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D4AF37] via-[#C5A880] to-[#7A1528] flex items-center justify-center shadow-md">
             <Crown className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="font-serif text-white text-base font-semibold tracking-wide leading-tight">
+            <span className="font-serif text-white text-base font-bold tracking-wide leading-tight block">
               Shree Palace
-            </p>
+            </span>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
-              <p className="text-[10px] uppercase tracking-widest text-[#C5A880] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
+              <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-semibold block">
                 Owner Portal
-              </p>
+              </span>
             </div>
           </div>
         </div>
@@ -244,9 +246,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Backend health status pill */}
-        <div className="px-4 py-2 border-t border-white/5 bg-black/20">
-          <div className="flex items-center justify-between text-[11px] text-stone-400">
-            <span className="flex items-center gap-1.5">
+        <div className="px-4 py-2.5 border-t border-white/10 bg-black/40">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-2">
               <span
                 className={`w-2 h-2 rounded-full ${
                   apiOnline === true
@@ -256,25 +258,27 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                     : "bg-amber-400"
                 }`}
               />
-              {apiOnline === true
-                ? "API Connected"
-                : apiOnline === false
-                ? "API Cold Starting"
-                : "Checking API…"}
+              <span className={apiOnline === true ? "text-emerald-300 font-medium" : "text-stone-300"}>
+                {apiOnline === true
+                  ? "API Connected"
+                  : apiOnline === false
+                  ? "API Cold Starting"
+                  : "Checking API…"}
+              </span>
             </span>
-            <span className="text-[10px] text-stone-500 font-mono">v1.2</span>
+            <span className="text-[10px] text-stone-400 font-mono">v1.2</span>
           </div>
         </div>
 
         {/* User Card & Actions */}
         <div className="border-t border-white/10 p-4 bg-white/5">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-[#7A1528] border border-[#C5A880]/50 flex items-center justify-center text-xs font-serif text-white font-bold">
+            <div className="w-8 h-8 rounded-full bg-[#7A1528] border border-[#D4AF37]/60 flex items-center justify-center text-xs font-serif text-white font-bold">
               {user?.username?.[0]?.toUpperCase() || "A"}
             </div>
             <div className="truncate flex-1">
-              <p className="text-xs font-medium text-stone-200 truncate">{user?.username}</p>
-              <p className="text-[10px] text-stone-400 truncate">{user?.email || "Manager"}</p>
+              <span className="text-xs font-semibold text-white truncate block">{user?.username}</span>
+              <span className="text-[10px] text-stone-300 truncate block">{user?.email || "Manager"}</span>
             </div>
           </div>
 
@@ -283,14 +287,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-[11px] tracking-wider text-[#C5A880] hover:text-[#E8D4B8] transition-colors font-medium"
+              className="inline-flex items-center gap-1.5 text-[11px] tracking-wider text-[#D4AF37] hover:text-white transition-colors font-medium"
             >
               <ExternalLink className="w-3.5 h-3.5" /> View Website
             </a>
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex items-center gap-1 text-[11px] tracking-wider text-stone-400 hover:text-rose-400 transition-colors"
+              className="inline-flex items-center gap-1 text-[11px] tracking-wider text-stone-300 hover:text-rose-400 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" /> Sign Out
             </button>

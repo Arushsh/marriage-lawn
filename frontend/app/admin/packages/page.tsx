@@ -128,9 +128,9 @@ export default function AdminPackagesPage() {
           {packages.map((pkg) => (
             <article key={pkg.id} className="bg-white border border-border p-5 space-y-3 flex flex-col">
               <div className="flex items-start justify-between gap-2">
-                <h2 className="font-serif text-lg text-primary font-normal">{pkg.name}</h2>
+                <h2 className="text-lg font-bold text-stone-900 tracking-tight">{pkg.name}</h2>
                 {pkg.is_popular && (
-                  <span className="text-[9px] uppercase tracking-wider font-semibold text-white bg-primary px-2 py-0.5 border border-accent">
+                  <span className="text-[10px] font-semibold text-[#8F6A35] bg-[#C5A880]/15 px-2 py-0.5 rounded-full border border-[#C5A880]/30">
                     Popular
                   </span>
                 )}
@@ -244,10 +244,10 @@ function PackageForm({
   return (
     <form onSubmit={handleSubmit} className="bg-white border border-accent p-5 sm:p-6 space-y-4 max-w-[760px] mb-8">
       <div className="flex items-center justify-between">
-        <h2 className="font-serif text-lg text-primary font-normal">
+        <h2 className="font-serif text-lg text-stone-900 font-semibold">
           {initial ? `Edit: ${initial.name}` : "New Package"}
         </h2>
-        <button type="button" onClick={onClose} className="text-xs uppercase tracking-wider text-muted hover:text-text">
+        <button type="button" onClick={onClose} className="text-xs uppercase tracking-wider text-stone-500 hover:text-stone-900">
           Cancel
         </button>
       </div>

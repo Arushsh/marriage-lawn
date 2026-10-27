@@ -345,7 +345,7 @@ function ReviewsTab() {
     <div className="space-y-5 max-w-[820px]">
       {error && <Banner kind="error">{error}</Banner>}
       <form onSubmit={handleAdd} className="bg-white border border-border p-5 space-y-4">
-        <h2 className="font-serif text-lg text-primary font-normal">Add Review</h2>
+        <h2 className="font-serif text-lg text-stone-900 font-semibold">Add Review</h2>
         <div className="grid sm:grid-cols-4 gap-4">
           <Field label="Author"><TextInput name="author_name" required /></Field>
           <Field label="Rating">
@@ -481,7 +481,7 @@ function FAQsTab() {
     <div className="space-y-5 max-w-[820px]">
       {error && <Banner kind="error">{error}</Banner>}
       <form onSubmit={handleAdd} className="bg-white border border-border p-5 space-y-4">
-        <h2 className="font-serif text-lg text-primary font-normal">Add FAQ</h2>
+        <h2 className="font-serif text-lg text-stone-900 font-semibold">Add FAQ</h2>
         <Field label="Question"><TextInput name="question" required /></Field>
         <Field label="Answer"><TextArea name="answer" rows={3} required /></Field>
         <div className="flex items-end gap-3">

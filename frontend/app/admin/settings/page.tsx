@@ -360,11 +360,13 @@ export default function AdminSettingsPage() {
 
 function SettingsCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="bg-white border border-border">
-      <h2 className="px-5 sm:px-6 py-3.5 border-b border-border bg-surface font-serif text-lg text-primary font-normal">
-        {title}
-      </h2>
-      <div className="p-5 sm:p-6 space-y-4">{children}</div>
+    <section className="bg-white border border-stone-200/90 rounded-2xl shadow-xs overflow-hidden">
+      <div className="px-6 py-4 border-b border-stone-200 bg-stone-50/80">
+        <h2 className="text-base font-semibold text-stone-900 tracking-tight">
+          {title}
+        </h2>
+      </div>
+      <div className="p-6 space-y-5">{children}</div>
     </section>
   );
 }

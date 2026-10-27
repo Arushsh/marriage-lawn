@@ -144,24 +144,15 @@ body:not(:has(.admin-root)) h4 { font-size: 19px; }
 
 /* ── Admin Dashboard Protected Styles ── */
 .admin-root {
-  background-color: #fafaf9 !important;
-  color: #1c1917 !important;
+  background-color: #fafaf9;
+  color: #1c1917;
+  color-scheme: light;
 }
 
-.admin-root h1,
-.admin-root h2,
-.admin-root h3,
-.admin-root h4,
-.admin-root h5,
-.admin-root h6 {
-  color: inherit !important;
-  line-height: 1.25 !important;
-  text-wrap: unset !important;
-  letter-spacing: normal !important;
-}
-
-.admin-root p {
-  color: inherit;
+.admin-root :is(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.25;
+  text-wrap: unset;
+  letter-spacing: normal;
 }
 
 p { line-height: 1.7; }
