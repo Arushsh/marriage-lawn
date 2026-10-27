@@ -188,17 +188,24 @@ SIMPLE_JWT = {
 }
 
 # ─── CORS ─────────────────────────────────────────────────────────────────────
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "True").lower() in ("true", "1")
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.vercel\.app$",
+    r"^https:\/\/.*\.onrender\.com$",
+    r"^http:\/\/localhost:\d+$",
+    r"^http:\/\/127\.0\.0\.1:\d+$",
+]
 CORS_ALLOWED_ORIGINS: list[str] = [
     o.strip()
     for o in os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
-    if o.strip()
+    if o.strip() and "*" not in o
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF Trusted Origins (required for Django 4/5 admin and POST endpoints on Render / Vercel)
 CSRF_TRUSTED_ORIGINS: list[str] = [
     o.strip()
-    for o in os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:3000,http://127.0.0.1:8000").split(",")
+    for o in os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost:3000,http://127.0.0.1:8000,https://*.vercel.app,https://*.onrender.com").split(",")
     if o.strip()
 ]
 
