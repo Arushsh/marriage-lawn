@@ -19,17 +19,17 @@ export const Badge: React.FC<BadgeProps> = ({
   ...props
 }) => {
   const variantStyles: Record<BadgeVariant, string> = {
-    default: "bg-surface text-text border border-border",
-    accent: "bg-surface text-accent border border-accent/60",
-    popular: "bg-primary text-white border border-accent",
-    success: "bg-emerald-50 text-emerald-900 border border-emerald-300",
-    danger: "bg-rose-50 text-rose-900 border border-rose-300",
-    warning: "bg-amber-50 text-amber-900 border border-amber-300",
+    default: "bg-surface-2 text-ink-soft border border-border",
+    accent: "bg-teal-ink text-zari-bright border border-zari/40",
+    popular: "bg-rani text-white border border-zari/50",
+    success: "bg-[#0f3d2a] text-[#7ee2ac] border border-[#2e7d55]/40",
+    danger: "bg-[#43101f] text-[#f2a0b5] border border-[#8a2c47]/50",
+    warning: "bg-[#3d2a0a] text-diya border border-diya/40",
   };
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-none text-[10px] font-semibold tracking-[0.14em] uppercase ${variantStyles[variant]} ${className}`}
+      className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-semibold tracking-[0.14em] uppercase border ${variantStyles[variant]} ${className}`}
       {...props}
     >
       {children}

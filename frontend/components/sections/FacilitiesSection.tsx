@@ -16,9 +16,10 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { Hall, Facility } from "@/types/api";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { FadeUp } from "@/components/ui/FadeUp";
+import { FlipIn } from "@/components/animations/FlipIn";
+import { AnimatedHeading } from "@/components/animations/AnimatedHeading";
 
 interface FacilitiesSectionProps {
   halls?: Hall[];
@@ -49,55 +50,55 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
   const topFacilities = showAllFacilities ? facilities : facilities.slice(0, 8);
 
   return (
-    <section id="facilities" className="py-20 sm:py-32 bg-bg border-b border-border">
+    <section id="facilities" className="relative py-20 sm:py-32 bg-bg border-t border-border overflow-hidden">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-16">
         {/* Halls & Event Spaces */}
-        <div className="space-y-8">
+        <div className="space-y-10">
           <FadeUp>
-            <div className="space-y-3">
-              <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
-                Palatial Architecture
-              </span>
-              <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
+            <div className="space-y-4 max-w-2xl">
+              <AnimatedHeading
+                as="h2"
+                className="font-serif text-[30px] sm:text-[44px] leading-[1.12] text-ink"
+              >
                 Halls &amp; Event Lawns
-              </h2>
-              <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[62ch]">
-                Dedicated spaces for sacred rituals, regal receptions, and gatherings with clear seating and floating capacities.
+              </AnimatedHeading>
+              <p className="text-[15px] sm:text-[17px] text-muted leading-[1.7] max-w-[62ch]">
+                Dedicated spaces for sacred rituals, regal receptions, and gatherings with
+                clear seating and floating capacities.
               </p>
             </div>
           </FadeUp>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {halls.map((hall, idx) => (
-              <FadeUp key={hall.id || idx} delay={idx * 0.08}>
-                <Card className="flex flex-col h-full overflow-hidden p-0 rounded-none border border-border bg-white transition-colors hover:border-accent">
-                  <div className="p-2 bg-white">
-                    <div className="relative h-52 w-full overflow-hidden bg-stone-100">
-                      <Image
-                        src={
-                          (hall.image && hall.image.trim())
-                            ? hall.image
-                            : idx === 0
-                            ? "/palace-colonnade.jpg"
-                            : idx === 1
-                            ? "/palace-hall.jpg"
-                            : "/palace-lawn.jpg"
-                        }
-                        alt={hall.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 400px"
-                        className="object-cover"
-                        priority={idx === 0}
-                      />
-                      <div className="absolute top-3 right-3 bg-bg text-primary text-[10px] font-semibold tracking-[0.14em] uppercase px-2.5 py-1 border border-accent">
-                        {hall.is_ac ? "Air Conditioned" : "Open Lawn"}
-                      </div>
+              <FlipIn key={hall.id || idx} delay={idx * 0.08} from={14}>
+                <article className="silk-panel rounded-2xl flex flex-col h-full overflow-hidden royal-card-hover">
+                  <div className="relative h-56 w-full overflow-hidden">
+                    <Image
+                      src={
+                        hall.image && hall.image.trim()
+                          ? hall.image
+                          : idx === 0
+                          ? "/palace-colonnade.jpg"
+                          : idx === 1
+                          ? "/palace-hall.jpg"
+                          : "/palace-lawn.jpg"
+                      }
+                      alt={hall.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      className="object-cover transition-transform duration-700 ease-out hover:scale-[1.05]"
+                      priority={idx === 0}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#04101a]/55 via-transparent to-transparent" />
+                    <div className="absolute top-3.5 right-3.5 gota-glass rounded-md px-2.5 py-1 text-[10px] font-semibold tracking-[0.14em] uppercase text-zari-bright">
+                      {hall.is_ac ? "Air Conditioned" : "Open Lawn"}
                     </div>
                   </div>
 
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <h3 className="font-serif text-[22px] font-normal leading-[1.25] text-primary">
+                      <h3 className="font-serif text-[22px] leading-[1.25] text-ink">
                         {hall.name}
                       </h3>
                       {hall.description && (
@@ -109,38 +110,35 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
 
                     <div className="pt-4 border-t border-border flex items-center justify-between text-xs">
                       <div>
-                        <span className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold block">
-                          Seating Capacity
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-muted font-semibold block">
+                          Seating
                         </span>
-                        <span className="font-medium text-base text-text mt-0.5 block">
-                          {hall.seating_capacity} guests
+                        <span className="font-semibold text-base text-ink mt-0.5 block">
+                          {hall.seating_capacity}
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="text-[10px] uppercase tracking-[0.14em] text-accent font-semibold block">
-                          Floating Capacity
+                        <span className="text-[10px] uppercase tracking-[0.14em] text-muted font-semibold block">
+                          Floating
                         </span>
-                        <span className="font-medium text-base text-primary mt-0.5 block">
-                          {hall.floating_capacity} guests
+                        <span className="font-semibold text-base text-teal mt-0.5 block">
+                          {hall.floating_capacity}
                         </span>
                       </div>
                     </div>
                   </div>
-                </Card>
-              </FadeUp>
+                </article>
+              </FlipIn>
             ))}
           </div>
         </div>
 
         {/* Facilities & Amenities List */}
         {facilities.length > 0 && (
-          <div className="space-y-6 pt-8 border-t border-border">
+          <div className="space-y-6 pt-12 border-t border-border">
             <FadeUp>
-              <div className="space-y-2">
-                <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
-                  Logistics &amp; Infrastructure
-                </span>
-                <h3 className="font-serif text-[24px] sm:text-[28px] font-normal leading-[1.25] text-primary">
+              <div className="space-y-3 max-w-2xl">
+                <h3 className="font-serif text-[24px] sm:text-[30px] leading-[1.2] text-ink">
                   Estate Facilities &amp; Amenities
                 </h3>
                 <p className="text-sm text-muted max-w-[62ch]">
@@ -149,9 +147,8 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
               </div>
             </FadeUp>
 
-            {/* Simple two-column list with thin dividers */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 divide-y sm:divide-y-0 border-t border-b border-border py-2">
-              <div className="divide-y divide-black/[0.05]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 border-t border-b border-border py-2">
+              <div className="divide-y divide-border/70">
                 {topFacilities
                   .slice(0, Math.ceil(topFacilities.length / 2))
                   .map((fac, idx) => {
@@ -159,11 +156,11 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
                     return (
                       <div
                         key={fac.id || idx}
-                        className="py-3 flex items-center justify-between gap-4 text-sm"
+                        className="py-3.5 flex items-center justify-between gap-4 text-sm group"
                       >
                         <div className="flex items-center gap-3">
-                          <IconComp className="w-5 h-5 text-primary shrink-0" strokeWidth={1.5} />
-                          <span className="font-medium text-text">{fac.name}</span>
+                          <IconComp className="w-5 h-5 text-teal shrink-0 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.5} />
+                          <span className="font-medium text-ink">{fac.name}</span>
                         </div>
                         {fac.detail && (
                           <span className="text-muted text-right text-xs sm:text-sm">
@@ -175,7 +172,7 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
                   })}
               </div>
 
-              <div className="divide-y divide-black/[0.05]">
+              <div className="divide-y divide-border/70 sm:border-l sm:border-border/70">
                 {topFacilities
                   .slice(Math.ceil(topFacilities.length / 2))
                   .map((fac, idx) => {
@@ -183,11 +180,11 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
                     return (
                       <div
                         key={fac.id || idx}
-                        className="py-3 flex items-center justify-between gap-4 text-sm"
+                        className="py-3.5 flex items-center justify-between gap-4 text-sm group sm:pl-12"
                       >
                         <div className="flex items-center gap-3">
-                          <IconComp className="w-5 h-5 text-primary shrink-0" strokeWidth={1.5} />
-                          <span className="font-medium text-text">{fac.name}</span>
+                          <IconComp className="w-5 h-5 text-teal shrink-0 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.5} />
+                          <span className="font-medium text-ink">{fac.name}</span>
                         </div>
                         {fac.detail && (
                           <span className="text-muted text-right text-xs sm:text-sm">
@@ -206,7 +203,6 @@ export const FacilitiesSection: React.FC<FacilitiesSectionProps> = ({
                   variant="text"
                   size="sm"
                   onClick={() => setShowAllFacilities(true)}
-                  className="text-sm font-medium text-primary"
                 >
                   View all {facilities.length} amenities
                 </Button>

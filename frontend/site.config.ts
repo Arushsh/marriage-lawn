@@ -36,6 +36,8 @@ export const fallbackSiteSettings: SiteSettings = {
   rating_value: "4.8",
   rating_count: 142,
   weddings_hosted: 520,
+  events_hosted: 1200,
+  years_of_experience: 20,
   primary_color: defaultTheme.primary,
   accent_color: defaultTheme.accent,
   logo: "",

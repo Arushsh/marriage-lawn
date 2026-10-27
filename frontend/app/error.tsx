@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { AlertCircle, RefreshCw, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { fallbackSiteSettings } from "@/site.config";
 
 export default function Error({
   error,
@@ -15,15 +16,19 @@ export default function Error({
     console.error("Home page error:", error);
   }, [error]);
 
+  const whatsappHref = `https://wa.me/${fallbackSiteSettings.whatsapp_number}?text=${encodeURIComponent(
+    "Hi, I am interested in venue booking information."
+  )}`;
+
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
-      <div className="max-w-md w-full bg-surface p-8 rounded-2xl shadow-xl border border-black/5 text-center space-y-5">
-        <div className="w-14 h-14 rounded-full bg-danger/10 text-danger flex items-center justify-center mx-auto">
-          <AlertCircle className="w-8 h-8" />
+      <div className="max-w-md w-full bg-surface p-8 border border-border text-center space-y-5">
+        <div className="w-14 h-14 border border-accent/40 bg-white text-primary flex items-center justify-center mx-auto">
+          <AlertCircle className="w-7 h-7" strokeWidth={1.5} />
         </div>
 
         <div className="space-y-2">
-          <h2 className="font-serif text-2xl font-bold text-primary">
+          <h2 className="font-serif text-2xl font-medium text-primary">
             Unable to Load Venue Information
           </h2>
           <p className="text-sm text-muted">
@@ -41,11 +46,7 @@ export default function Error({
             Retry Connection
           </Button>
 
-          <a
-            href="https://wa.me/919876543210?text=Hi%2C%20I%20am%20interested%20in%20venue%20booking%20information."
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
             <Button
               variant="whatsapp"
               size="sm"

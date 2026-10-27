@@ -92,7 +92,7 @@ export async function getPaginatedGallery(
     return { count: 0, next: null, results: [] };
   }
   return {
-    count: data.count || (Array.isArray(data) ? (data as any).length : 0),
+    count: data.count || (Array.isArray(data) ? (data as unknown[]).length : 0),
     next: data.next || null,
     results: data.results || (Array.isArray(data) ? data : []),
   };
@@ -207,8 +207,8 @@ export async function verifyBookingPayment(
   return data;
 }
 
-export async function getBookingDetails(reference: string): Promise<any> {
-  const data = await fetchJson<any>(`/bookings/${reference}/`, { cache: "no-store" });
+export async function getBookingDetails(reference: string): Promise<unknown> {
+  const data = await fetchJson<unknown>(`/bookings/${reference}/`, { cache: "no-store" });
   if (!data) {
     throw new Error("Booking not found.");
   }

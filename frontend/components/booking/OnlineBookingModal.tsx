@@ -33,6 +33,12 @@ const ADDONS = [
   { id: "live-music", name: "Live Shehnai, Sitar & Classical Musicians", price: 12000, desc: "Acoustic traditional welcome melodies for guest arrival" },
 ];
 
+/** Module scope: timestamp calls stay out of render (react-hooks purity). */
+function makeMockPaymentId(): string {
+  return `pay_mock_${Date.now().toString(36)}`;
+}
+
+
 export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
   isOpen,
   onClose,
@@ -42,7 +48,6 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
   const [step, setStep] = useState<number>(1);
   const [halls, setHalls] = useState<Hall[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
-  const [isLoadingData, setIsLoadingData] = useState(false);
 
   // Form State
   const [selectedHallId, setSelectedHallId] = useState<number>(defaultHallId || 0);
@@ -68,7 +73,7 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
   // Load halls and packages on open
   useEffect(() => {
     if (isOpen) {
-      setIsLoadingData(true);
+      const timer = setTimeout(() => {
       Promise.all([getHalls(), getPackages()])
         .then(([hList, pList]) => {
           setHalls(hList);
@@ -80,8 +85,15 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
             setSelectedPackageId(pList[0].id);
           }
         })
-        .finally(() => setIsLoadingData(false));
+        .finally(() => {
+          /* refresh complete */
+        });
+      }, 0);
+      return () => clearTimeout(timer);
     }
+    // selectedHallId / selectedPackageId are read once as defaults at open;
+    // adding them would refetch (and reset defaults) on every user selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -148,8 +160,8 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
       const res = await createBooking(payload);
       setBookingResult(res);
       setStep(4); // Move to Payment Step
-    } catch (err: any) {
-      setErrorMessage(err?.message || "Failed to initiate online booking. Please try again.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Failed to initiate online booking. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -164,7 +176,7 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
       const advanceVal = parseFloat(bookingResult.advance_amount || "0") || advancePayable;
       const verifyRes = await verifyBookingPayment(bookingResult.booking_reference, {
         order_id: bookingResult.payment_order_id || `ord_${bookingResult.booking_reference}`,
-        payment_id: `pay_mock_${Date.now().toString(36)}`,
+        payment_id: makeMockPaymentId(),
         signature: "mock_sig_verified",
         amount: advanceVal,
         provider: "mock",
@@ -197,11 +209,11 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
             colors: ["#B8860B", "#059669", "#D4AF37"],
           });
         }, 250);
-      } catch (cErr) {
+      } catch {
         // Confetti optional
       }
-    } catch (err: any) {
-      setErrorMessage(err?.message || "Payment verification failed. Please try again.");
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Payment verification failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -363,7 +375,7 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
                         <button
                           key={item.id}
                           type="button"
-                          onClick={() => setSlot(item.id as any)}
+                          onClick={() => setSlot(item.id as "full_day" | "morning" | "evening")}
                           className={`py-2 px-1 text-center border transition-all text-xs cursor-pointer ${
                             slot === item.id
                               ? "bg-[#6B1426] text-white font-medium border-[#6B1426]"
@@ -752,7 +764,7 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
                         ₹
                         {parseFloat(
                           paymentResult?.paid_amount ||
-                            (paymentResult as any)?.amount_paid ||
+                            (paymentResult as { amount_paid?: string } | null)?.amount_paid ||
                             bookingResult.advance_amount ||
                             "0"
                         ).toLocaleString()}
@@ -764,7 +776,7 @@ export const OnlineBookingModal: React.FC<OnlineBookingModalProps> = ({
                         ₹
                         {parseFloat(
                           paymentResult?.balance_amount ||
-                            (paymentResult as any)?.balance_remaining ||
+                            (paymentResult as { balance_remaining?: string } | null)?.balance_remaining ||
                             "0"
                         ).toLocaleString()}
                       </div>

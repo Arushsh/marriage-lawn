@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AvailabilityStatus } from "@/types/api";
 import { getAvailability } from "@/lib/api";
+import { scrollToTarget } from "@/lib/scroll";
 import {
   buildDateKey,
   isPastDate,
@@ -14,6 +15,7 @@ import {
   formatAriaDate,
 } from "@/lib/dates";
 import { FadeUp } from "@/components/ui/FadeUp";
+import { AnimatedHeading } from "@/components/animations/AnimatedHeading";
 
 interface AvailabilitySectionProps {
   onSelectDate: (dateKey: string) => void;
@@ -27,6 +29,7 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
   selectedDate,
 }) => {
   const today = new Date();
+  const todayKey = buildDateKey(today.getFullYear(), today.getMonth(), today.getDate());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0-indexed
 
@@ -128,39 +131,36 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
     if (isPast || status === "booked") return;
 
     onSelectDate(dateKey);
-
-    const contactElem = document.getElementById("contact");
-    if (contactElem) {
-      contactElem.scrollIntoView({ behavior: "smooth" });
-    }
+    scrollToTarget("#contact");
   };
 
   return (
-    <section id="availability" className="py-20 sm:py-32 bg-bg border-b border-border">
+    <section id="availability" className="relative py-20 sm:py-32 bg-bg border-t border-border">
       <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-10">
         <FadeUp>
-          <div className="space-y-3">
-            <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
-              Muhurat &amp; Auspicious Dates
-            </span>
-            <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
+          <div className="space-y-4 max-w-2xl">
+            <AnimatedHeading
+              as="h2"
+              className="font-serif text-[30px] sm:text-[44px] leading-[1.12] text-ink"
+            >
               Check Date Availability
-            </h2>
-            <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[62ch]">
-              Select an open date to initiate your booking reservation. Red strikethrough denotes confirmed estate buyouts.
+            </AnimatedHeading>
+            <p className="text-[15px] sm:text-[17px] text-muted leading-[1.7] max-w-[62ch]">
+              Select an open date to initiate your booking reservation. Struck-through
+              squares denote confirmed estate buyouts.
             </p>
           </div>
         </FadeUp>
 
-        {/* Calendar Card: Royal Heritage Editorial Hairline Box */}
+        {/* Calendar — the estate's date weave, today's knot under a chase light */}
         <div
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
-          className="bg-white rounded-none p-6 sm:p-10 border border-border max-w-2xl mx-auto space-y-6 select-none shadow-none"
+          className="gota-glass rounded-2xl p-6 sm:p-10 max-w-2xl mx-auto space-y-6 select-none"
         >
           {/* Header with Navigation */}
           <div className="flex items-center justify-between pb-4 border-b border-border">
-            <span className="font-serif text-2xl font-normal text-primary">
+            <span className="font-serif text-2xl text-ink">
               {getMonthName(currentMonth)} {currentYear}
             </span>
 
@@ -170,13 +170,13 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
                 onClick={handlePrevMonth}
                 disabled={isCurrentMonthOrPast}
                 aria-label="Previous Month"
-                className={`w-10 h-10 flex items-center justify-center rounded-none border border-border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`w-10 h-10 flex items-center justify-center rounded-lg border border-border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rani ${
                   isCurrentMonthOrPast
                     ? "opacity-30 cursor-not-allowed"
-                    : "hover:bg-surface hover:border-accent"
+                    : "hover:bg-white/10 hover:border-border-strong"
                 }`}
               >
-                <ChevronLeft className="w-5 h-5 text-text" strokeWidth={1.5} />
+                <ChevronLeft className="w-5 h-5 text-ink" strokeWidth={1.5} />
               </button>
 
               <button
@@ -184,13 +184,13 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
                 onClick={handleNextMonth}
                 disabled={isMaxMonth}
                 aria-label="Next Month"
-                className={`w-10 h-10 flex items-center justify-center rounded-none border border-border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                className={`w-10 h-10 flex items-center justify-center rounded-lg border border-border transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rani ${
                   isMaxMonth
                     ? "opacity-30 cursor-not-allowed"
-                    : "hover:bg-surface hover:border-accent"
+                    : "hover:bg-white/10 hover:border-border-strong"
                 }`}
               >
-                <ChevronRight className="w-5 h-5 text-text" strokeWidth={1.5} />
+                <ChevronRight className="w-5 h-5 text-ink" strokeWidth={1.5} />
               </button>
             </div>
           </div>
@@ -200,7 +200,7 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
             {WEEKDAYS.map((day) => (
               <span
                 key={day}
-                className="text-[11px] font-semibold text-accent py-1 block uppercase tracking-[0.16em]"
+                className="text-[11px] font-semibold text-muted py-1 block uppercase tracking-[0.16em]"
               >
                 {day}
               </span>
@@ -225,6 +225,7 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
               const past = isPastDate(dateKey);
               const status: AvailabilityStatus = activeMonthStatusMap[dateKey] || "available";
               const isSelected = selectedDate === dateKey;
+              const isToday = dateKey === todayKey && !past;
 
               const isBooked = status === "booked";
               const isTentative = status === "tentative";
@@ -239,19 +240,19 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
                   disabled={past || isBooked}
                   aria-label={ariaLabel}
                   onClick={() => handleDateClick(dateKey, status, past)}
-                  className={`min-h-[44px] aspect-square flex items-center justify-center rounded-none text-sm transition-all cursor-pointer relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                  className={`min-h-[44px] aspect-square flex items-center justify-center rounded-lg text-sm transition-all relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rani ${
                     isSelected
-                      ? "bg-primary text-white font-medium border border-accent ring-1 ring-accent"
+                      ? "bg-rani text-white font-bold ring-1 ring-zari/60"
                       : ""
                   } ${
                     past
-                      ? "text-black/25 cursor-not-allowed"
+                      ? "text-ink/25 cursor-not-allowed"
                       : isBooked
-                      ? "text-primary/40 line-through bg-stone-100 cursor-not-allowed"
+                      ? "text-ink/35 line-through bg-white/[0.04] cursor-not-allowed"
                       : isTentative
-                      ? "text-accent bg-amber-50/70 border border-accent/40 hover:bg-amber-100/60"
-                      : "text-text border border-transparent hover:border-accent hover:bg-surface"
-                  }`}
+                      ? "text-diya bg-diya-soft border border-diya/40 hover:bg-diya/15"
+                      : "text-ink border border-transparent hover:border-zari/50 hover:bg-white/[0.06]"
+                  } ${isToday && !isSelected ? "animate-[chaseLight_2.2s_ease-in-out_infinite] border-diya/70 text-diya font-semibold" : ""}`}
                 >
                   <span>{day}</span>
                 </button>
@@ -260,20 +261,24 @@ export const AvailabilitySection: React.FC<AvailabilitySectionProps> = ({
           </div>
 
           {/* Legend */}
-          <div className="pt-5 border-t border-border flex flex-wrap items-center justify-center gap-6 text-xs text-text">
+          <div className="pt-5 border-t border-border flex flex-wrap items-center justify-center gap-6">
             <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-none border border-border bg-white" />
+              <span className="w-3.5 h-3.5 rounded-sm border border-border-strong bg-transparent" />
               <span className="text-xs uppercase tracking-wider text-muted">Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-none bg-stone-100 border border-stone-300 text-primary/60 flex items-center justify-center text-[10px] line-through">
+              <span className="w-3.5 h-3.5 rounded-sm bg-white/[0.06] border border-border text-ink/40 flex items-center justify-center text-[10px] line-through">
                 -
               </span>
               <span className="text-xs uppercase tracking-wider text-muted">Booked</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-3.5 h-3.5 rounded-none bg-amber-50 border border-accent/50" />
+              <span className="w-3.5 h-3.5 rounded-sm bg-diya-soft border border-diya/50" />
               <span className="text-xs uppercase tracking-wider text-muted">Tentative</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3.5 h-3.5 rounded-sm border border-diya/70 bg-transparent" />
+              <span className="text-xs uppercase tracking-wider text-muted">Today</span>
             </div>
           </div>
 

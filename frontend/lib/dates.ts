@@ -41,7 +41,7 @@ export function getMonthName(monthZeroIndexed: number): string {
 
 export function formatAriaDate(dateStr: string, status: string): string {
   if (!dateStr) return "";
-  const [yearStr, monthStr, dayStr] = dateStr.split("-");
+  const [, monthStr, dayStr] = dateStr.split("-");
   const monthIdx = parseInt(monthStr, 10) - 1;
   const day = parseInt(dayStr, 10);
   const monthName = MONTH_NAMES[monthIdx] || "";

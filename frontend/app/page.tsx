@@ -1,4 +1,5 @@
 import React from "react";
+import dynamic from "next/dynamic";
 import {
   getSiteSettings,
   getHalls,
@@ -19,9 +20,20 @@ import { FacilitiesSection } from "@/components/sections/FacilitiesSection";
 import { PackagesSection } from "@/components/sections/PackagesSection";
 import { MenuSection } from "@/components/sections/MenuSection";
 import { BookingFlow } from "@/components/sections/BookingFlow";
-import { Lawn360ViewSection } from "@/components/sections/Lawn360ViewSection";
+
+// ── Below-fold heavy sections: lazy-loaded after page is interactive ──────────
+const PalaceFilmSection = dynamic(
+  () => import("@/components/sections/PalaceFilmSection").then(m => ({ default: m.PalaceFilmSection })),
+  { loading: () => <div className="h-[60vh] bg-ground-deep animate-pulse" aria-hidden="true" /> }
+);
+
+const Lawn360ViewSection = dynamic(
+  () => import("@/components/sections/Lawn360ViewSection").then(m => ({ default: m.Lawn360ViewSection })),
+  { loading: () => <div className="h-[50vh] bg-bg animate-pulse" aria-hidden="true" /> }
+);
 
 export const revalidate = 60; // ISR revalidate every 60 seconds
+
 
 export default async function HomePage() {
   // Fetch all live data in parallel from the Django API backend
@@ -57,11 +69,14 @@ export default async function HomePage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
-      {/* 6.1 Hero Section */}
+      {/* 6.1 Landing Hero — WebGL petals + halo, instant CTAs */}
       <Hero site={site} halls={halls} />
 
       {/* 6.2 Quick Highlights Strip */}
       <HighlightsStrip halls={halls} facilities={facilities} />
+
+      {/* 6.2b The Palace Film — immersive 4K walkthrough */}
+      <PalaceFilmSection site={site} halls={halls} />
 
       {/* 6.3 About the Venue */}
       <AboutSection site={site} />

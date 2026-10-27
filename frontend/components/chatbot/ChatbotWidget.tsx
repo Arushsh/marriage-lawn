@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { MessageSquare, X, Send, Bot, User, Sparkles, ExternalLink } from "lucide-react";
+import { X, Send, Bot, Sparkles, ExternalLink } from "lucide-react";
 import { SiteSettings } from "@/types/api";
-import { queryChatbot, getChatbotSuggestions } from "@/lib/api";
+import { queryChatbot } from "@/lib/api";
 import { buildWhatsAppUrl, buildGeneralInquiryMessage } from "@/lib/whatsapp";
 
 interface Message {
@@ -16,6 +16,21 @@ interface Message {
 
 interface ChatbotWidgetProps {
   site: SiteSettings;
+}
+
+/** Module scope so timestamp calls stay out of render (react-hooks purity). */
+function makeMessage(
+  sender: "user" | "bot",
+  text: string,
+  suggestions?: string[]
+): Message {
+  return {
+    id: `${sender}_${Date.now()}`,
+    sender,
+    text,
+    suggestions,
+    timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  };
 }
 
 export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({ site }) => {
@@ -70,34 +85,21 @@ export const ChatbotWidget: React.FC<ChatbotWidgetProps> = ({ site }) => {
       return;
     }
 
-    const userMsg: Message = {
-      id: `usr_${Date.now()}`,
-      sender: "user",
-      text: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
+    const userMsg = makeMessage("user", query);
 
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
 
     try {
       const res = await queryChatbot(query, sessionIdRef.current);
-      const botMsg: Message = {
-        id: `bot_${Date.now()}`,
-        sender: "bot",
-        text: res.reply,
-        suggestions: res.suggestions,
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
+      const botMsg = makeMessage("bot", res.reply, res.suggestions);
       setMessages((prev) => [...prev, botMsg]);
     } catch {
-      const errMsg: Message = {
-        id: `err_${Date.now()}`,
-        sender: "bot",
-        text: "I'm having a brief connection delay. Please feel free to chat directly with our event manager on WhatsApp!",
-        suggestions: ["💬 Chat on WhatsApp"],
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
+      const errMsg = makeMessage(
+        "bot",
+        "I'm having a brief connection delay. Please feel free to chat directly with our event manager on WhatsApp!",
+        ["💬 Chat on WhatsApp"]
+      );
       setMessages((prev) => [...prev, errMsg]);
     } finally {
       setLoading(false);

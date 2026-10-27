@@ -46,33 +46,31 @@ export const Modal: React.FC<ModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-          {/* Backdrop */}
+          {/* Backdrop — the hall dims */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-ground-deep/85 backdrop-blur-md"
           />
 
-          {/* Modal Container */}
+          {/* Modal — a gota glass panel */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 0.95, y: 18 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            transition={{ type: "spring", duration: 0.35, bounce: 0.15 }}
-            className={`relative w-full ${maxWidthClasses[maxWidth]} bg-surface rounded-2xl shadow-2xl border border-black/10 overflow-hidden z-10 my-8`}
+            exit={{ opacity: 0, scale: 0.96, y: 12 }}
+            transition={{ type: "spring", duration: 0.45, bounce: 0.16 }}
+            className={`relative w-full ${maxWidthClasses[maxWidth]} gota-glass-strong rounded-2xl overflow-hidden z-10 my-8`}
           >
             {/* Header */}
             {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-black/5 bg-[#FFFDF9]">
-                <h3 className="font-serif text-xl font-bold text-primary">
-                  {title}
-                </h3>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                <h3 className="font-serif text-xl text-ink">{title}</h3>
                 <button
                   onClick={onClose}
-                  className="p-1.5 text-muted hover:text-text rounded-lg hover:bg-black/5 transition-colors cursor-pointer"
+                  className="p-1.5 text-muted hover:text-ink rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                   aria-label="Close dialog"
                 >
                   <X className="w-5 h-5" />
@@ -83,7 +81,7 @@ export const Modal: React.FC<ModalProps> = ({
             {!title && (
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 z-10 p-2 text-muted hover:text-text rounded-full hover:bg-black/5 transition-colors cursor-pointer"
+                className="absolute top-4 right-4 z-10 p-2 text-muted hover:text-ink rounded-full hover:bg-white/10 transition-colors cursor-pointer"
                 aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />

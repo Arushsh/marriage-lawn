@@ -12,7 +12,6 @@ import {
   Sparkles,
   Volume2,
   VolumeX,
-  Languages,
 } from "lucide-react";
 import { requestVoiceCallback } from "@/lib/api";
 import { VoiceCallbackResponse } from "@/types/api";
@@ -36,7 +35,7 @@ export const InstantCallModal: React.FC<InstantCallModalProps> = ({
   const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [callResponse, setCallResponse] = useState<VoiceCallbackResponse | null>(null);
+  const [, setCallResponse] = useState<VoiceCallbackResponse | null>(null);
 
   // Language state: Default to Hindi as requested
   const [language, setLanguage] = useState<"hi" | "en">("hi");
@@ -184,9 +183,9 @@ export const InstantCallModal: React.FC<InstantCallModalProps> = ({
 
         speakAloud(greetingScript, language);
       }, 1800);
-    } catch (err: any) {
+    } catch (err) {
       setError(
-        err?.message ||
+        err instanceof Error ? err.message :
           (language === "hi"
             ? "एआई कॉल मिलाने में असमर्थ। कृपया पुनः प्रयास करें।"
             : "Failed to initiate AI call. Please try again.")

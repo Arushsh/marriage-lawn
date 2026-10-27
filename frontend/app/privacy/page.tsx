@@ -89,14 +89,30 @@ export default async function PrivacyPage() {
 
           <section className="space-y-3">
             <h2 className="font-serif text-[20px] sm:text-[24px] text-text font-normal leading-[1.25]">
-              4. How to Request Deletion
+              4. Cookies &amp; Local Storage
+            </h2>
+            <p>
+              This website stores a small preference on your device to remember
+              your cookie consent choice. We do not load advertising or
+              third-party tracking cookies. Full details, including how to
+              change your choice, are in our{" "}
+              <Link href="/cookies" className="text-primary underline underline-offset-2">
+                Cookie Policy
+              </Link>
+              .
+            </p>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="font-serif text-[20px] sm:text-[24px] text-text font-normal leading-[1.25]">
+              5. How to Request Deletion
             </h2>
             <p>
               You have the right at any time to request that we delete or update
               your contact information from our database. To do so, please
               contact us directly:
             </p>
-            <div className="bg-surface p-5 rounded-xl border border-black/[0.08] text-sm space-y-1.5">
+            <div className="bg-surface p-5 border border-border text-sm space-y-1.5">
               <p>
                 <strong>Venue:</strong> {site.venue_name}
               </p>

@@ -1,39 +1,117 @@
 @import "tailwindcss";
 
+/* ============================================================
+   BANARASI NIGHTS — design tokens
+   Dark is the default scene: a royal Banarasi silk woven at
+   night. Light is the morning workshop: pearl chalk and cool
+   teal ink. Every utility reads the runtime vars below, so
+   switching data-theme re-lights the whole site.
+   ============================================================ */
+
 :root {
-  --color-primary: #6B1426;         /* deep royal maroon */
-  --color-primary-dark: #4B0013;
-  --color-accent: #B8860B;          /* warm antique gold */
-  --color-bg: #FDFBF7;              /* ivory canvas background */
-  --color-surface: #FFF8F5;         /* subtle parchment */
-  --color-card: #FFFFFF;            /* crisp card surface */
-  --color-text: #1E1B19;            /* charcoal onyx */
-  --color-muted: #554243;           /* muted umber */
-  --color-border: #E6DFC8;          /* hairline divider */
-  --radius: 0px;
+  /* night silk ground */
+  --c-ground: #07131e;
+  --c-ground-deep: #040c14;
+  --c-panel: #0c2331;
+  --c-panel-2: #102c3a;
+  --c-card: #0e2836;
+  --c-ink: #eaf2f0;
+  --c-ink-soft: #c3d4d2;
+  --c-muted: #93aca9;
+  --c-line: rgba(232, 226, 208, 0.14);
+  --c-line-strong: rgba(232, 226, 208, 0.28);
+  --c-zari: #e8e2d0;
+  --c-zari-bright: #f6f1e0;
+  --c-teal: #7fc4b2;
+  --c-teal-deep: #14514a;
+  --c-teal-ink: #0e3a3c;
+  --c-rani: #e0147c;
+  --c-rani-deep: #a90f5e;
+  --c-diya: #ffb454;
+  --c-diya-soft: rgba(255, 180, 84, 0.14);
+  --c-glass: rgba(12, 35, 49, 0.55);
+  --c-glass-strong: rgba(10, 30, 42, 0.78);
+  --c-shadow: rgba(2, 8, 14, 0.6);
+  --silk-sheen: linear-gradient(
+    115deg,
+    rgba(232, 226, 208, 0.05) 0%,
+    rgba(232, 226, 208, 0.12) 28%,
+    rgba(232, 226, 208, 0.02) 55%,
+    rgba(255, 180, 84, 0.05) 100%
+  );
+  color-scheme: dark;
 }
 
-@theme {
-  --color-primary: var(--color-primary);
-  --color-primary-dark: var(--color-primary-dark);
-  --color-accent: var(--color-accent);
-  --color-bg: var(--color-bg);
-  --color-surface: var(--color-surface);
-  --color-card: var(--color-card);
-  --color-text: var(--color-text);
-  --color-muted: var(--color-muted);
-  --color-border: var(--color-border);
-  --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
-  --font-sans: var(--font-jakarta), var(--font-poppins), system-ui, -apple-system, sans-serif;
+html[data-theme="light"] {
+  --c-ground: #f1f2ec;
+  --c-ground-deep: #e6e8e0;
+  --c-panel: #fbfaf4;
+  --c-panel-2: #f4f3ea;
+  --c-card: #ffffff;
+  --c-ink: #10262e;
+  --c-ink-soft: #2c434c;
+  --c-muted: #4f656a;
+  --c-line: rgba(16, 38, 46, 0.14);
+  --c-line-strong: rgba(16, 38, 46, 0.3);
+  --c-zari: #9d8a55;
+  --c-zari-bright: #7c6a3a;
+  --c-teal: #0e4a44;
+  --c-teal-deep: #0b3b36;
+  --c-teal-ink: #0e3a3c;
+  --c-rani: #c50d6e;
+  --c-rani-deep: #93094f;
+  --c-diya: #b36a00;
+  --c-diya-soft: rgba(179, 106, 0, 0.1);
+  --c-glass: rgba(255, 255, 255, 0.62);
+  --c-glass-strong: rgba(255, 255, 255, 0.82);
+  --c-shadow: rgba(16, 38, 46, 0.14);
+  --silk-sheen: linear-gradient(
+    115deg,
+    rgba(16, 38, 46, 0.02) 0%,
+    rgba(16, 38, 46, 0.05) 28%,
+    rgba(16, 38, 46, 0.01) 55%,
+    rgba(179, 106, 0, 0.04) 100%
+  );
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--c-ground);
+  --color-ground-deep: var(--c-ground-deep);
+  --color-surface: var(--c-panel);
+  --color-surface-2: var(--c-panel-2);
+  --color-card: var(--c-card);
+  --color-text: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
+  --color-muted: var(--c-muted);
+  --color-border: var(--c-line);
+  --color-border-strong: var(--c-line-strong);
+  --color-zari: var(--c-zari);
+  --color-zari-bright: var(--c-zari-bright);
+  --color-teal: var(--c-teal);
+  --color-teal-deep: var(--c-teal-deep);
+  --color-teal-ink: var(--c-teal-ink);
+  --color-primary: var(--c-teal);
+  --color-primary-dark: var(--c-teal-deep);
+  --color-accent: var(--c-zari);
+  --color-rani: var(--c-rani);
+  --color-rani-deep: var(--c-rani-deep);
+  --color-diya: var(--c-diya);
+  --color-champagne: #D6B779;
+  --color-ivory: #F7F0E4;
+  --color-charcoal: #100F0D;
+  --color-sand-muted: #C8C0B3;
+  --font-serif: var(--font-bodoni), "Bodoni Moda", Didot, Georgia, serif;
+  --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
 }
 
 html {
-  scroll-padding-top: 4.5rem; /* 72px — matches sticky navbar height */
+  scroll-padding-top: 4.5rem;
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: var(--c-ground);
+  color: var(--c-ink);
   font-family: var(--font-sans);
   font-weight: 400;
   font-size: 16px;
@@ -41,6 +119,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: 88px;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 @media (min-width: 768px) {
@@ -50,55 +129,215 @@ body {
   }
 }
 
-/* Headings in normal weight (400-500), 1.2 line height, text-wrap: balance */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
   font-weight: 500;
-  color: var(--color-text);
-  line-height: 1.2;
+  color: var(--c-ink);
+  line-height: 1.15;
   text-wrap: balance;
 }
 
-h1 {
-  font-size: 40px;
-  line-height: 1.2;
-}
+h1 { font-size: clamp(40px, 5.2vw, 72px); letter-spacing: -0.015em; }
+h2 { font-size: clamp(30px, 3.6vw, 48px); letter-spacing: -0.01em; }
+h3 { font-size: clamp(20px, 2vw, 26px); }
+h4 { font-size: 19px; }
 
-@media (min-width: 640px) {
-  h1 {
-    font-size: 64px;
-  }
-}
+p { line-height: 1.7; }
 
-h2 {
-  font-size: 28px;
-  line-height: 1.2;
-}
-
-@media (min-width: 640px) {
-  h2 {
-    font-size: 40px;
-  }
-}
-
-h3 {
-  font-size: 20px;
-  line-height: 1.25;
-}
-
-@media (min-width: 640px) {
-  h3 {
-    font-size: 24px;
-  }
-}
-
-p {
-  line-height: 1.65;
-}
-
-/* Utility classes for typography and constraints */
 .content-constraint {
-  max-width: 60ch;
+  max-width: 68ch;
+}
+
+/* ── Browser surfaces carry the design ───────────────────── */
+::selection {
+  background: var(--c-rani);
+  color: #fff;
+}
+
+* {
+  caret-color: var(--c-rani);
+}
+
+html {
+  scrollbar-color: var(--c-teal-ink) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--c-ground-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-teal-ink);
+  border: 2px solid var(--c-ground-deep);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-teal-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-rani);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Gota glass — frosted glass panels of the silk world ─── */
+.gota-glass {
+  background: var(--c-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  backdrop-filter: blur(18px) saturate(1.25);
+  border: 1px solid var(--c-line);
+  box-shadow: 0 18px 48px -20px var(--c-shadow), inset 0 1px 0 rgba(232, 226, 208, 0.09);
+}
+
+.gota-glass-strong {
+  background: var(--c-glass-strong);
+  -webkit-backdrop-filter: blur(26px) saturate(1.3);
+  backdrop-filter: blur(26px) saturate(1.3);
+  border: 1px solid var(--c-line-strong);
+  box-shadow: 0 24px 64px -24px var(--c-shadow), inset 0 1px 0 rgba(232, 226, 208, 0.1);
+}
+
+/* A silk panel: subtle woven sheen over an opaque jewel ground */
+.silk-panel {
+  background-color: var(--c-panel);
+  background-image: var(--silk-sheen);
+  border: 1px solid var(--c-line);
+}
+
+/* Zari hairline — the pearl thread that structures the page */
+.zari-hairline {
+  border-color: var(--c-line);
+}
+
+.zari-text {
+  color: var(--c-zari);
+}
+
+/* Thin woven-texture strip used between passages */
+.silk-seam {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--c-line-strong) 18%,
+    var(--c-zari) 50%,
+    var(--c-line-strong) 82%,
+    transparent
+  );
+}
+
+/* ── Motion vocabulary ────────────────────────────────────── */
+
+@keyframes silkFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes diyaPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.2; }
+  40% { opacity: 0.9; }
+  60% { opacity: 0.6; }
+}
+
+@keyframes emberDrift {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  12% { opacity: 0.8; }
+  88% { opacity: 0.5; }
+  100% { transform: translateY(-72vh) translateX(4vw); opacity: 0; }
+}
+
+@keyframes zariSweep {
+  0% { transform: translateX(-130%) skewX(-18deg); }
+  100% { transform: translateX(230%) skewX(-18deg); }
+}
+
+@keyframes chaseLight {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 180, 84, 0.55), 0 0 14px 2px rgba(255, 180, 84, 0.35); }
+  50% { box-shadow: 0 0 0 3px rgba(255, 180, 84, 0.18), 0 0 22px 6px rgba(255, 180, 84, 0.5); }
+}
+
+.gentle-float {
+  animation: silkFloat 5s ease-in-out infinite;
+}
+
+.royal-card-hover {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.45s ease, background-color 0.45s ease;
+}
+
+.royal-card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 56px -18px var(--c-shadow);
+  border-color: var(--c-line-strong);
+}
+
+/* Shine sweep for primary silk buttons */
+.silk-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.silk-btn::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 34%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.32),
+    transparent
+  );
+  transform: translateX(-130%) skewX(-18deg);
+  pointer-events: none;
+}
+
+.silk-btn:hover::after {
+  animation: zariSweep 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom cursor: the zari needle. Native cursor stays on
+   interactive text fields; everything else shows the needle. */
+@media (hover: hover) and (pointer: fine) {
+  html[data-zari-cursor="on"] body,
+  html[data-zari-cursor="on"] a,
+  html[data-zari-cursor="on"] button,
+  html[data-zari-cursor="on"] [role="button"],
+  html[data-zari-cursor="on"] label,
+  html[data-zari-cursor="on"] summary {
+    cursor: none;
+  }
+  html[data-zari-cursor="on"] input,
+  html[data-zari-cursor="on"] textarea,
+  html[data-zari-cursor="on"] select {
+    cursor: auto;
+  }
+}
+
+.zari-cursor-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
 }
 
 /* Hide scrollbars but keep scroll functionality */
@@ -110,7 +349,32 @@ p {
   scrollbar-width: none;
 }
 
-/* Accessibility: Respect prefers-reduced-motion */
+/* Section passage lit by one declared light */
+.passage-diya {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(255, 180, 84, 0.09), transparent 70%),
+    var(--c-ground);
+}
+
+.passage-pearl {
+  background:
+    radial-gradient(ellipse 75% 50% at 50% 10%, rgba(232, 226, 208, 0.05), transparent 70%),
+    var(--c-ground-deep);
+}
+
+html[data-theme="light"] .passage-diya {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(179, 106, 0, 0.07), transparent 70%),
+    var(--c-ground);
+}
+
+html[data-theme="light"] .passage-pearl {
+  background:
+    radial-gradient(ellipse 75% 50% at 50% 10%, rgba(16, 38, 46, 0.04), transparent 70%),
+    var(--c-ground-deep);
+}
+
+/* ── Accessibility: Respect prefers-reduced-motion ───────── */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -124,55 +388,3 @@ p {
     scroll-behavior: auto !important;
   }
 }
-
-/* Accessible focus visible default */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* ======================================================== */
-/* LUXURY ANIMATIONS & SHADOWS                              */
-/* ======================================================== */
-
-@keyframes goldShimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.gold-shimmer-text {
-  background: linear-gradient(90deg, #B8860B 0%, #FFF3D6 50%, #B8860B 100%);
-  background-size: 200% auto;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: goldShimmer 6s linear infinite;
-}
-
-@keyframes gentleFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.gentle-float {
-  animation: gentleFloat 4s ease-in-out infinite;
-}
-
-.royal-card-hover {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
-}
-
-.royal-card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 32px -8px rgba(107, 20, 38, 0.08), 0 4px 12px -2px rgba(184, 134, 11, 0.12);
-  border-color: #B8860B;
-}
-

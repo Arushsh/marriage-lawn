@@ -1,273 +1,49 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SiteSettings, Hall } from "@/types/api";
 import { OnlineBookingModal } from "@/components/booking/OnlineBookingModal";
 import { InstantCallModal } from "@/components/voice/InstantCallModal";
-import { Calendar, PhoneCall, Sparkles, Star, Volume2, VolumeX } from "lucide-react";
+import { scrollToTarget } from "@/lib/scroll";
+import { ArrowDown, Calendar, ArrowRight, Compass, Sparkles } from "lucide-react";
 
 interface HeroProps {
   site: SiteSettings;
   halls?: Hall[];
 }
 
-interface Scene {
-  title: string;
-  subtitle: string;
-  phaseLabel: string;
-  caption: string;
-  image: string;
-  alt: string;
-  objectPosition: string;
-  transformOrigin: string;
-}
-
-const SCENES: Scene[] = [
-  {
-    title: "Begin Your Forever",
-    subtitle: "The Grand Royal Palace & Courtyard Entrance",
-    phaseLabel: "PHASE 01 • THE PALACE ARRIVAL",
-    caption: "Step through historic illuminated gates into an evening of royal heritage",
-    image: "/palace-exterior.jpg",
-    alt: "Grand illuminated Shree Palace Lawn exterior entrance facade and courtyard at twilight",
-    objectPosition: "center 10%",
-    transformOrigin: "center 22%",
-  },
-  {
-    title: "Celebrate Under the Stars",
-    subtitle: "Lush Illuminated Green Lawn with Elegant Guest Seating",
-    phaseLabel: "PHASE 02 • THE SPRAWLING LAWN",
-    caption: "40,000 sq.ft of velvet greenery, glowing chandeliers & celebratory warmth",
-    image: "/palace-lawn.jpg",
-    alt: "Vast sprawling illuminated marriage lawn with round table guest seating and chandeliers",
-    objectPosition: "center 45%",
-    transformOrigin: "center 50%",
-  },
-  {
-    title: "A Venue as Grand as Your Love",
-    subtitle: "Golden Arched Colonnades & Heritage Walkways",
-    phaseLabel: "PHASE 03 • ROYAL COLONNADE WALKWAY",
-    caption: "Walk beneath regal golden arches reflecting candlelight and timeless romance",
-    image: "/palace-colonnade.jpg",
-    alt: "Illuminated golden arched palace colonnade walkway with reflective marble floors",
-    objectPosition: "center center",
-    transformOrigin: "center 50%",
-  },
-  {
-    title: "The Grand Botanic Lawn",
-    subtitle: "Bespoke Decorated Vedic Mandap & Varmala Stage",
-    phaseLabel: "PHASE 04 • THE SACRED MANDAP",
-    caption: "Arriving at the sacred altar where vows are consecrated for eternity",
-    image: "/palace-mandap.jpg",
-    alt: "Royal wedding mandap decorated with golden carved arches, royal thrones and marigold florals",
-    objectPosition: "center 20%",
-    transformOrigin: "center 30%",
-  },
-];
-
-// Film duration in seconds
-const TOTAL_FILM_SECONDS = 74;
-// Progress threshold where story transitions into the Grand Climax
-const CLIMAX_THRESHOLD = 0.84;
-
+/**
+ * Cinematic Wedding Venue Hero Section with GSAP & ScrollTrigger.
+ *
+ * Visual Direction:
+ *  - Full-screen real wedding venue photography (illuminated evening lawn & mandap).
+ *  - Charcoal/black overlay (#100F0D) with champagne-gold (#D6B779) and ivory (#F7F0E4) accents.
+ *  - Large editorial serif typography with romantic luxury aesthetic.
+ *  - GSAP ScrollTrigger camera dolly push-in on scroll with multi-layer 3D parallax.
+ *  - Seamless continuous visual journey from hero into venue introduction.
+ *  - Accessible, responsive, with graceful fallback for prefers-reduced-motion.
+ */
 export const Hero: React.FC<HeroProps> = ({ site, halls = [] }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const oscillatorsRef = useRef<OscillatorNode[]>([]);
-  const gainNodeRef = useRef<GainNode | null>(null);
+  const heroWrapperRef = useRef<HTMLElement>(null);
+  const heroPinRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const darkOverlayRef = useRef<HTMLDivElement>(null);
+  const stardustLayerRef = useRef<HTMLDivElement>(null);
 
-  // Raw scroll progress and smoothed/damped lerp progress for cinematic inertia delay
-  const [rawProgress, setRawProgress] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
+  // Hero headline & content refs for GSAP
+  const eyebrowRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const ctaGroupRef = useRef<HTMLDivElement>(null);
+  const trustBadgeRef = useRef<HTMLDivElement>(null);
+  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+
+  // Transition Venue Introduction ref
+  const venueIntroRef = useRef<HTMLDivElement>(null);
 
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
-  const [isAudioActive, setIsAudioActive] = useState(false);
-
-  // High-performance scroll tracking
-  useEffect(() => {
-    let ticking = false;
-
-    const updateScrollProgress = () => {
-      if (!containerRef.current) return;
-      const container = containerRef.current;
-      const rect = container.getBoundingClientRect();
-      const scrollableDistance = container.offsetHeight - window.innerHeight;
-
-      if (scrollableDistance <= 0) return;
-
-      const currentRaw = Math.min(
-        Math.max(-rect.top / scrollableDistance, 0),
-        1
-      );
-      setRawProgress(currentRaw);
-      ticking = false;
-    };
-
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(updateScrollProgress);
-        ticking = true;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", handleScroll, { passive: true });
-    updateScrollProgress();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleScroll);
-    };
-  }, []);
-
-  // Cinematic Damping / Smooth Responsive Tracking
-  // Damping factor: 0.16 gives instant, tactile response without lagging behind scroll
-  useEffect(() => {
-    let animId: number;
-    const lerpFactor = 0.16;
-
-    const tick = () => {
-      setProgress((prev) => {
-        const diff = rawProgress - prev;
-        if (Math.abs(diff) < 0.0002) return rawProgress;
-        return prev + diff * lerpFactor;
-      });
-      animId = requestAnimationFrame(tick);
-    };
-
-    animId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animId);
-  }, [rawProgress]);
-
-  // Web Audio API: Soothing 432Hz ambient palace soundscape for the ✦ diamond star
-  const toggleAmbientAudio = useCallback(() => {
-    if (isAudioActive) {
-      // Fade out and stop
-      if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.setTargetAtTime(
-          0.0001,
-          audioCtxRef.current.currentTime,
-          0.3
-        );
-        setTimeout(() => {
-          oscillatorsRef.current.forEach((osc) => {
-            try {
-              osc.stop();
-            } catch {}
-          });
-          oscillatorsRef.current = [];
-          setIsAudioActive(false);
-        }, 350);
-      } else {
-        setIsAudioActive(false);
-      }
-    } else {
-      try {
-        const AudioCtx =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext })
-            .webkitAudioContext;
-        const ctx = new AudioCtx();
-        audioCtxRef.current = ctx;
-
-        const masterGain = ctx.createGain();
-        masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        masterGain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 1.2);
-        masterGain.connect(ctx.destination);
-        gainNodeRef.current = masterGain;
-
-        // Warm palace chord frequencies (Root A4 432Hz, E5 648Hz, C#5 540Hz)
-        const freqs = [216, 432, 540, 648];
-        const oscs: OscillatorNode[] = [];
-
-        freqs.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          osc.type = idx === 0 ? "sine" : "triangle";
-          osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
-          // Subtle harmonic detuning for royal palace warmth
-          if (idx > 0) {
-            osc.detune.setValueAtTime(idx * 3.5, ctx.currentTime);
-          }
-
-          const filter = ctx.createBiquadFilter();
-          filter.type = "lowpass";
-          filter.frequency.setValueAtTime(800, ctx.currentTime);
-
-          osc.connect(filter);
-          filter.connect(masterGain);
-          osc.start();
-          oscs.push(osc);
-        });
-
-        oscillatorsRef.current = oscs;
-        setIsAudioActive(true);
-      } catch {
-        setIsAudioActive(false);
-      }
-    }
-  }, [isAudioActive]);
-
-  // Cleanup audio context on unmount
-  useEffect(() => {
-    return () => {
-      oscillatorsRef.current.forEach((osc) => {
-        try {
-          osc.stop();
-        } catch {}
-      });
-      if (audioCtxRef.current) {
-        try {
-          audioCtxRef.current.close();
-        } catch {}
-      }
-    };
-  }, []);
-
-  // Jump smoothly to a specific point in the film
-  const scrollToRatio = useCallback((ratio: number) => {
-    if (!containerRef.current) return;
-    const container = containerRef.current;
-    const containerTop = window.scrollY + container.getBoundingClientRect().top;
-    const scrollableDistance = container.offsetHeight - window.innerHeight;
-    const targetY = containerTop + ratio * scrollableDistance;
-    window.scrollTo({ top: Math.max(0, targetY), behavior: "smooth" });
-  }, []);
-
-  // Live film timecode calculation (e.g. 00:24 / 01:14)
-  const currentSeconds = Math.min(
-    Math.floor(progress * TOTAL_FILM_SECONDS),
-    TOTAL_FILM_SECONDS
-  );
-  const formattedMinutes = String(Math.floor(currentSeconds / 60)).padStart(
-    2,
-    "0"
-  );
-  const formattedSeconds = String(currentSeconds % 60).padStart(2, "0");
-  const timecodeString = `${formattedMinutes}:${formattedSeconds} / 01:14`;
-
-  // Story stage progression:
-  // Progress 0.0 to 0.08: Stage 0 Intro Title Card ("M A H A L" Film Title)
-  // Progress 0.08 to 0.84: The 4 Walkthrough Scenes with continuous walking zoom
-  // Progress 0.84 to 1.0: Grand Climax Reveal Card
-  const WALK_START = 0.06;
-  const introOpacity = Math.max(0, 1 - progress / 0.09);
-  const isIntro = progress < 0.08;
-
-  const storyProgress = Math.min(
-    Math.max((progress - WALK_START) / (CLIMAX_THRESHOLD - WALK_START), 0),
-    1
-  );
-  // 0.0 to 3.0 across the 4 walkthrough phases
-  const storyStage = storyProgress * 3.0;
-
-  const isClimax = progress >= CLIMAX_THRESHOLD;
-  const climaxFactor = Math.min(
-    Math.max((progress - CLIMAX_THRESHOLD) / (1.0 - CLIMAX_THRESHOLD), 0),
-    1
-  );
 
   const maxCapacity = halls.reduce(
     (max, h) => Math.max(max, h.floating_capacity || h.seating_capacity || 0),
@@ -276,384 +52,469 @@ export const Hero: React.FC<HeroProps> = ({ site, halls = [] }) => {
   const capacityFormatted =
     maxCapacity > 0 ? maxCapacity.toLocaleString() : "1,500";
 
+  // Hero Copy — customizable via site settings with high-end luxury defaults
+  const headline = site.tagline?.includes("Where")
+    ? site.tagline
+    : "Where Forever Begins.";
+  const supportingText =
+    site.tagline && site.tagline !== headline
+      ? site.tagline
+      : "A timeless setting for extraordinary celebrations and unforgettable memories.";
+
+  // High-resolution local wedding photography default
+  const heroPhoto = site.hero_image || "/images/hero-venue.jpg";
+
+  useEffect(() => {
+    let ctx: { revert: () => void } | undefined;
+    let isCancelled = false;
+
+    (async () => {
+      try {
+        const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+          import("gsap"),
+          import("gsap/ScrollTrigger"),
+        ]);
+
+        if (isCancelled || !heroWrapperRef.current) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        ctx = gsap.context(() => {
+          if (reduced) {
+            // Reduced motion fallback: simple static state
+            gsap.set(
+              [
+                eyebrowRef.current,
+                headlineRef.current,
+                descriptionRef.current,
+                ctaGroupRef.current,
+                trustBadgeRef.current,
+                scrollIndicatorRef.current,
+              ],
+              { opacity: 1, y: 0 }
+            );
+            return;
+          }
+
+          // ── 1. Initial Page Load Animation ─────────────────────────────
+          const loadTimeline = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+          // Start image slightly zoomed in (1.14) and settle smoothly into position (1.04)
+          loadTimeline.fromTo(
+            imageContainerRef.current,
+            { scale: 1.14 },
+            { scale: 1.04, duration: 2.0, ease: "power2.out" }
+          );
+
+          // Subtle background overlay breath-in
+          loadTimeline.fromTo(
+            darkOverlayRef.current,
+            { opacity: 0.35 },
+            { opacity: 0.65, duration: 1.6, ease: "power1.inOut" },
+            0
+          );
+
+          // Editorial typography entrance: elegant upward float
+          loadTimeline.fromTo(
+            [
+              eyebrowRef.current,
+              headlineRef.current,
+              descriptionRef.current,
+              ctaGroupRef.current,
+              trustBadgeRef.current,
+              scrollIndicatorRef.current,
+            ],
+            { opacity: 0, y: 36, filter: "blur(6px)" },
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 1.1,
+              stagger: 0.12,
+              ease: "power2.out",
+            },
+            0.3
+          );
+
+          // Ambient stardust drift in
+          if (stardustLayerRef.current) {
+            loadTimeline.fromTo(
+              stardustLayerRef.current,
+              { opacity: 0 },
+              { opacity: 0.7, duration: 2.2, ease: "power2.out" },
+              0.4
+            );
+          }
+
+          // ── 2. Scroll-Linked Cinematic Camera & Parallax (GSAP ScrollTrigger) ──
+          const isMobile = window.innerWidth < 768;
+          const scrollDistance = isMobile ? "+=90%" : "+=140%";
+
+          const scrollTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: heroWrapperRef.current,
+              start: "top top",
+              end: scrollDistance,
+              pin: heroPinRef.current,
+              scrub: 1,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          // Layer 1 (Back): Camera pushes forward into the illuminated lawn & mandap
+          scrollTimeline.to(
+            imageContainerRef.current,
+            {
+              scale: 1.24,
+              yPercent: 4,
+              ease: "none",
+            },
+            0
+          );
+
+          // Layer 2 (Mid): Ambient stardust / bokeh drifts at parallax speed
+          if (stardustLayerRef.current) {
+            scrollTimeline.to(
+              stardustLayerRef.current,
+              {
+                yPercent: -20,
+                opacity: 0.25,
+                ease: "none",
+              },
+              0
+            );
+          }
+
+          // Layer 3 (Foreground): Hero Title & CTAs float upward and dissolve
+          scrollTimeline.to(
+            [
+              eyebrowRef.current,
+              headlineRef.current,
+              descriptionRef.current,
+              ctaGroupRef.current,
+              trustBadgeRef.current,
+            ],
+            {
+              y: -100,
+              opacity: 0,
+              filter: "blur(8px)",
+              stagger: 0.04,
+              ease: "none",
+            },
+            0
+          );
+
+          // Scroll indicator fades out immediately on first scroll touch
+          scrollTimeline.to(
+            scrollIndicatorRef.current,
+            {
+              opacity: 0,
+              y: -25,
+              duration: 0.2,
+              ease: "none",
+            },
+            0
+          );
+
+          // ── 3. Next Section Transition: Venue Introduction Reveals ─────
+          // As the headline dissolves, the elegant venue intro reveals smoothly
+          if (venueIntroRef.current) {
+            scrollTimeline.fromTo(
+              venueIntroRef.current,
+              {
+                opacity: 0,
+                y: 80,
+                filter: "blur(10px)",
+                pointerEvents: "none",
+              },
+              {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                pointerEvents: "auto",
+                duration: 0.5,
+                ease: "power2.out",
+              },
+              0.48
+            );
+          }
+
+          // Deepen overlay toward black/charcoal at the end of the pin
+          scrollTimeline.to(
+            darkOverlayRef.current,
+            {
+              opacity: 0.88,
+              ease: "none",
+            },
+            0.55
+          );
+        }, heroWrapperRef);
+      } catch {
+        // Fallback if GSAP fails to load
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+      ctx?.revert();
+    };
+  }, []);
+
   return (
     <>
-      {/* 
-        Full-bleed scroll container: 540vh height provides generous delay and scroll budget
-        for the continuous photorealistic 3D walkthrough requested.
-      */}
       <section
         id="home"
-        ref={containerRef}
-        className="relative h-[540vh] bg-stone-950 text-white select-none"
+        ref={heroWrapperRef}
+        className="relative w-full bg-[#100F0D] text-[#F7F0E4] select-none"
       >
-        {/* Pinned 100vh Cinema Viewport */}
-        <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-black">
-          {/* Base royal dark gradient backdrop */}
+        {/* Pinned Cinematic Screen (100svh) */}
+        <div
+          ref={heroPinRef}
+          className="relative w-full h-[100svh] overflow-hidden flex flex-col justify-between"
+        >
+          {/* ── Background Photography Layer (Scales with Scroll) ── */}
           <div
-            className="absolute inset-0 z-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, #1b0710 0%, #0d0306 50%, #000000 100%)",
-            }}
-          />
-
-          {/* Persistent Base Palace Scene 0 Layer */}
-          <div className="absolute inset-0 z-0 pointer-events-none opacity-40 overflow-hidden">
+            ref={imageContainerRef}
+            className="absolute inset-0 w-full h-full will-change-transform"
+            style={{ transformOrigin: "center center" }}
+          >
             <Image
-              src="/palace-exterior.jpg"
-              alt="Palatial estate grounds"
+              src={heroPhoto}
+              alt={`Cinematic view of ${site.venue_name} wedding venue lawn and mandap`}
               fill
-              unoptimized
               priority
+              quality={90}
               sizes="100vw"
-              style={{ objectPosition: "center 10%" }}
-              className="object-cover transform scale-105 filter blur-xs"
+              className="object-cover object-center"
             />
           </div>
 
-          {/* Background Images with Continuous Forward Walking Zoom */}
-          {SCENES.map((scene, i) => {
-            const dist = Math.abs(storyStage - i);
-            const baseOpacity = Math.max(0, 1 - Math.pow(dist, 1.25) * 1.25);
-            // Scene 0 stays partially visible during Stage 0 intro
-            const introMod = i === 0 ? Math.max(0.45, 1 - introOpacity * 0.55) : (1 - introOpacity);
-            const opacity = baseOpacity * introMod * (1 - climaxFactor);
-
-            // Forward camera push zoom: zooms smoothly from 1.00 up to 1.38 as you walk through each phase
-            const sceneLocalProgress = Math.max(
-              0,
-              Math.min(1, (storyStage - (i - 0.75)) / 1.5)
-            );
-            const scale = 1.00 + sceneLocalProgress * 0.38;
-            const cameraPanY = (sceneLocalProgress - 0.5) * -16;
-
-            return (
-              <div
-                key={scene.title}
-                style={{
-                  opacity,
-                  transition: "opacity 0.12s ease-out",
-                }}
-                className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
-              >
-                <div
-                  style={{
-                    transform: `scale(${scale}) translateY(${cameraPanY}px)`,
-                    transformOrigin: scene.transformOrigin,
-                    willChange: "transform",
-                  }}
-                  className="relative w-full h-full"
-                >
-                  <Image
-                    src={scene.image}
-                    alt={scene.alt}
-                    fill
-                    unoptimized
-                    priority={i < 2}
-                    sizes="100vw"
-                    style={{ objectPosition: scene.objectPosition }}
-                    className="object-cover"
-                  />
-                </div>
-                {/* Cinema Lighting: Subtle vignette that keeps the palace illuminated & bright */}
-                <div className="absolute inset-0 bg-black/15" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/15" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.45)_100%)]" />
-                {/* Ambient Regal Gold Sheen */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.06)_0%,transparent_75%)]" />
-              </div>
-            );
-          })}
-
-          {/* Climax Backdrop Image (Illuminated Palace Hall) */}
-          {(() => {
-            const climaxScale = 1.00 + climaxFactor * 0.18;
-            return (
-              <div
-                style={{
-                  opacity: climaxFactor,
-                  transition: "opacity 0.25s ease-out",
-                }}
-                className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
-              >
-                <div
-                  style={{
-                    transform: `scale(${climaxScale})`,
-                    transformOrigin: "center 50%",
-                    willChange: "transform",
-                  }}
-                  className="relative w-full h-full"
-                >
-                  <Image
-                    src="/palace-hall.jpg"
-                    alt={site.venue_name}
-                    fill
-                    unoptimized
-                    sizes="100vw"
-                    className="object-cover object-center"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-black/65" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/80" />
-              </div>
-            );
-          })()}
-
-          {/* ======================================================== */}
-          {/* STAGE 0: Iconic "M A H A L" Film Intro Card               */}
-          {/* Positioned in lower half so the palace rises majestically */}
-          {/* ======================================================== */}
+          {/* ── Dark Charcoal Cinematic Overlays (#100F0D) ── */}
+          {/* Dynamic dark tint that deepens on scroll */}
           <div
-            style={{
-              opacity: introOpacity,
-              transform: `scale(${1 + (1 - introOpacity) * 0.08})`,
-              pointerEvents: isIntro ? "auto" : "none",
-              transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
-            }}
-            className="absolute inset-0 z-20 flex flex-col items-center justify-end pb-16 sm:pb-22 md:pb-28 text-center px-6"
-          >
-            {/* Centered Palace Film Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-amber-400/40 bg-black/70 backdrop-blur-md text-amber-300 text-[10px] sm:text-xs uppercase tracking-[0.3em] font-mono mb-3 shadow-xl">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>THE PALACE FILM · 4K CINEMATIC WALKTHROUGH</span>
-            </div>
+            ref={darkOverlayRef}
+            aria-hidden="true"
+            className="absolute inset-0 bg-[#100F0D] pointer-events-none transition-opacity"
+            style={{ opacity: 0.65 }}
+          />
 
-            {/* Majestic "M A H A L" Title */}
-            <div className="space-y-3 max-w-4xl mx-auto">
-              <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl tracking-[0.35em] font-light text-white leading-none drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)] select-none">
-                M A H A L
+          {/* Luxury directional gradients for maximum text legibility & contrast */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-[#100F0D] via-[#100F0D]/40 to-[#100F0D]/70 pointer-events-none"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[radial-gradient(ellipse_75%_60%_at_50%_45%,transparent_20%,rgba(16,15,13,0.7)_90%)] pointer-events-none"
+          />
+
+          {/* ── Champagne Stars, Particles & Bokeh Atmosphere ── */}
+          <div
+            ref={stardustLayerRef}
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+          >
+            {/* Ambient radial glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_22%,rgba(214,183,121,0.14)_0%,transparent_48%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_65%,rgba(247,240,228,0.06)_0%,transparent_40%)]" />
+
+            {/* ── Twinkling Star Dots ── */}
+            {/* Row 1 */}
+            <div className="absolute top-[8%] left-[12%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-90" style={{animation:'pulse 2.1s ease-in-out infinite'}} />
+            <div className="absolute top-[12%] left-[28%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-80" style={{animation:'pulse 3.4s ease-in-out 0.6s infinite'}} />
+            <div className="absolute top-[6%] left-[55%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-70" style={{animation:'pulse 2.8s ease-in-out 1.2s infinite'}} />
+            <div className="absolute top-[9%] left-[72%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-85" style={{animation:'pulse 1.9s ease-in-out 0.3s infinite'}} />
+            <div className="absolute top-[14%] left-[88%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-60" style={{animation:'pulse 3.2s ease-in-out 2.1s infinite'}} />
+            {/* Row 2 */}
+            <div className="absolute top-[22%] left-[6%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-75" style={{animation:'pulse 2.6s ease-in-out 0.9s infinite'}} />
+            <div className="absolute top-[19%] left-[38%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-90" style={{animation:'pulse 1.7s ease-in-out 1.5s infinite'}} />
+            <div className="absolute top-[25%] left-[63%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-65" style={{animation:'pulse 3.8s ease-in-out 0.2s infinite'}} />
+            <div className="absolute top-[18%] left-[82%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-80" style={{animation:'pulse 2.3s ease-in-out 1.8s infinite'}} />
+            {/* Row 3 */}
+            <div className="absolute top-[34%] left-[15%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-70" style={{animation:'pulse 2.9s ease-in-out 0.5s infinite'}} />
+            <div className="absolute top-[38%] left-[48%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-55" style={{animation:'pulse 4.1s ease-in-out 1.1s infinite'}} />
+            <div className="absolute top-[31%] left-[78%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-85" style={{animation:'pulse 2.0s ease-in-out 2.4s infinite'}} />
+            {/* Row 4 (upper mid) */}
+            <div className="absolute top-[44%] left-[22%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-60" style={{animation:'pulse 3.5s ease-in-out 0.7s infinite'}} />
+            <div className="absolute top-[42%] left-[58%] w-[2px] h-[2px] rounded-full bg-[#D6B779] opacity-75" style={{animation:'pulse 1.8s ease-in-out 1.3s infinite'}} />
+            <div className="absolute top-[47%] left-[91%] w-[3px] h-[3px] rounded-full bg-[#F7F0E4] opacity-65" style={{animation:'pulse 2.7s ease-in-out 2.0s infinite'}} />
+
+            {/* ── 4-Point Sparkle Cross Stars ── */}
+            {[
+              {top:'7%',left:'45%',size:8,delay:'0s',dur:'3s',color:'#D6B779'},
+              {top:'15%',left:'18%',size:6,delay:'1.2s',dur:'2.5s',color:'#F7F0E4'},
+              {top:'28%',left:'92%',size:7,delay:'0.4s',dur:'3.8s',color:'#D6B779'},
+              {top:'40%',left:'34%',size:6,delay:'2.1s',dur:'2.2s',color:'#F7F0E4'},
+              {top:'11%',left:'68%',size:5,delay:'0.8s',dur:'4.0s',color:'#D6B779'},
+            ].map((s,i) => (
+              <svg key={i} aria-hidden="true" className="absolute" style={{top:s.top,left:s.left,width:s.size,height:s.size,opacity:0.7,animation:`pulse ${s.dur} ease-in-out ${s.delay} infinite`}} viewBox="0 0 10 10">
+                <path d="M5 0 L5.4 4.6 L10 5 L5.4 5.4 L5 10 L4.6 5.4 L0 5 L4.6 4.6 Z" fill={s.color} />
+              </svg>
+            ))}
+
+            {/* ── Bokeh Orbs (large soft glows) ── */}
+            <div className="absolute top-[10%] left-[40%] w-24 h-24 rounded-full bg-[#D6B779]/8 blur-2xl" style={{animation:'pulse 6s ease-in-out infinite'}} />
+            <div className="absolute top-[30%] left-[70%] w-32 h-32 rounded-full bg-[#F7F0E4]/5 blur-3xl" style={{animation:'pulse 8s ease-in-out 2s infinite'}} />
+            <div className="absolute top-[5%] left-[5%] w-20 h-20 rounded-full bg-[#D6B779]/6 blur-2xl" style={{animation:'pulse 7s ease-in-out 1s infinite'}} />
+
+            {/* ── Floating Ember Particles ── */}
+            {[
+              {left:'18%',delay:'0s',dur:'7s'},{left:'32%',delay:'1.4s',dur:'9s'},
+              {left:'54%',delay:'0.6s',dur:'8s'},{left:'71%',delay:'2.1s',dur:'6.5s'},
+              {left:'85%',delay:'1.1s',dur:'10s'},{left:'7%',delay:'3.2s',dur:'7.5s'},
+            ].map((e,i) => (
+              <div key={i} className="absolute bottom-0 w-[3px] h-[3px] rounded-full bg-[#D6B779]" style={{left:e.left,opacity:0,animation:`emberDrift ${e.dur} ease-out ${e.delay} infinite`}} />
+            ))}
+          </div>
+
+          {/* Spacer for fixed transparent navigation bar */}
+          <div className="w-full h-20 shrink-0" />
+
+          {/* ── Hero Main Content: Large Editorial Serif Typography ── */}
+          <div className="relative z-20 max-w-[1280px] w-full mx-auto px-5 sm:px-10 lg:px-16 flex-1 flex flex-col justify-center">
+            <div className="max-w-4xl space-y-6 sm:space-y-8">
+              {/* Gold Eyebrow */}
+              <div
+                ref={eyebrowRef}
+                className="flex items-center gap-3 text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-[#D6B779]"
+              >
+                <span className="w-7 h-[1px] bg-[#D6B779]/80" />
+                <span>
+                  ROYAL WEDDING SANCTUARY · {site.city.toUpperCase()} · EST.{" "}
+                  {site.years_of_experience > 0
+                    ? new Date().getFullYear() - site.years_of_experience
+                    : "2006"}
+                </span>
+              </div>
+
+              {/* Editorial Serif Headline */}
+              <h1
+                ref={headlineRef}
+                className="font-serif font-medium text-[clamp(44px,7.8vw,108px)] leading-[1.04] tracking-[-0.015em] text-[#F7F0E4] [text-wrap:balance]"
+              >
+                {headline}
               </h1>
 
-              {/* Hairline Divider */}
-              <div className="w-16 h-px bg-amber-400/60 mx-auto my-3" />
-
-              {/* Subtitle */}
-              <p className="font-serif italic text-white/90 text-xs sm:text-sm md:text-base tracking-[0.12em] font-light max-w-xl mx-auto drop-shadow-lg">
-                Seventy-four seconds of palace, played entirely to your hands.
+              {/* Supporting Romance & Venue Description: Short, High-Impact Words */}
+              <p
+                ref={descriptionRef}
+                className="text-[#C8C0B3] text-base sm:text-lg lg:text-xl font-light max-w-xl leading-relaxed tracking-wide"
+              >
+                Grand emerald lawns. Illuminated pavilions. Unforgettable vows.
               </p>
 
-              {/* Enter The Film Button */}
-              <div className="pt-3">
-                <button
-                  type="button"
-                  onClick={() => scrollToRatio(0.12)}
-                  className="px-6 py-2.5 rounded-full border border-amber-400/40 hover:border-amber-400 bg-black/60 hover:bg-black/80 text-white text-[11px] uppercase tracking-[0.3em] font-semibold transition-all cursor-pointer backdrop-blur-md group inline-flex items-center gap-2 shadow-xl"
-                >
-                  <span>[ ENTER THE FILM ]</span>
-                  <span className="text-amber-400 group-hover:translate-y-0.5 transition-transform">
-                    ↓
-                  </span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* ======================================================== */}
-          {/* STORY TYPOGRAPHY (4 Walkthrough Scenes): Romantic Serif   */}
-          {/* Positioned in lower third so the palace & venue grounds  */}
-          {/* are prominently visible above the text                  */}
-          {/* ======================================================== */}
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-end pb-16 sm:pb-22 md:pb-26 px-4 pointer-events-none">
-            <div className="w-full max-w-4xl">
-              {SCENES.map((scene, i) => {
-                const textDist = Math.abs(storyStage - i);
-                // Generous plateau/hold time so user enjoys the scene without it rushing away
-                const textOpacity =
-                  Math.max(0, 1 - textDist * 1.25) *
-                  (1 - introOpacity) *
-                  (1 - climaxFactor);
-                const translateY = (storyStage - i) * -16;
-                const textScale = 0.96 + Math.max(0, 1 - textDist) * 0.04;
-
-                if (textOpacity <= 0.005) return null;
-
-                return (
-                  <div
-                    key={scene.title}
-                    style={{
-                      opacity: textOpacity,
-                      transform: `translateY(${translateY}px) scale(${textScale})`,
-                      willChange: "transform, opacity",
-                      transition:
-                        "opacity 0.15s ease-out, transform 0.15s ease-out",
-                      pointerEvents: textOpacity > 0.4 ? "auto" : "none",
-                    }}
-                    className="flex flex-col items-center justify-center text-center"
-                  >
-                  {/* Phase Label Pill */}
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-black/60 border border-amber-400/50 backdrop-blur-md mb-4 text-amber-300 text-[10px] sm:text-xs font-mono font-semibold tracking-[0.28em] uppercase shadow-md">
-                    <Sparkles className="w-3 h-3 text-amber-400" />
-                    <span>{scene.phaseLabel}</span>
-                  </div>
-
-                  {/* Romantic Serif Heading */}
-                  <h2 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white tracking-wide leading-[1.08] drop-shadow-[0_4px_30px_rgba(0,0,0,0.98)] max-w-4xl">
-                    {scene.title}
-                  </h2>
-
-                  {/* Subtitle */}
-                  <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.32em] text-amber-300 font-medium mt-4 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] max-w-2xl">
-                    {scene.subtitle}
-                  </p>
-
-                  {/* Romantic Caption */}
-                  <p className="font-serif italic text-white/75 text-xs sm:text-sm mt-3 tracking-wide drop-shadow max-w-lg">
-                    {scene.caption}
-                  </p>
-                </div>
-              );
-            })}
-
-            {/* Accessible Screen Reader Outline */}
-            <div className="sr-only">
-              <h3>Palace Film Walkthrough Scenes</h3>
-              <ul>
-                {SCENES.map((s) => (
-                  <li key={s.title}>{s.title} — {s.subtitle}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-          {/* ======================================================== */}
-          {/* CLIMAX GRAND REVEAL CARD (Progress >= 86%)                */}
-          {/* Exactly matching crop_23s.jpg of reference video         */}
-          {/* ======================================================== */}
-          <div
-            style={{
-              opacity: climaxFactor,
-              transform: `translateY(${(1 - climaxFactor) * 30}px) scale(${
-                0.96 + climaxFactor * 0.04
-              })`,
-              pointerEvents: climaxFactor > 0.4 ? "auto" : "none",
-              transition: "opacity 0.25s ease-out, transform 0.25s ease-out",
-            }}
-            className="relative z-20 text-center px-4 max-w-4xl mx-auto"
-          >
-            {/* Monogram Seal */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-amber-400/60 bg-black/70 backdrop-blur-md mb-6 text-amber-300 text-xs font-semibold tracking-[0.25em] uppercase rounded-full">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Heritage Palatial Estate</span>
-              <span className="text-amber-500/60">◆</span>
-              <span>Prayagraj</span>
-            </div>
-
-            {/* Title */}
-            <div className="space-y-2 mb-4">
-              <div className="font-serif text-sm sm:text-base tracking-[0.45em] uppercase text-amber-300 font-light drop-shadow">
-                M A H A L
-              </div>
-              <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-light text-white tracking-tight leading-[1.1] drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]">
-                {site.venue_name}
-              </h1>
-            </div>
-
-            {/* Tagline */}
-            <p className="font-serif italic text-lg sm:text-2xl text-amber-200/90 max-w-2xl mx-auto mb-4 font-light drop-shadow">
-              Where Your Wedding Story Begins
-            </p>
-
-            <p className="text-stone-300 text-xs sm:text-sm max-w-xl mx-auto mb-8 font-normal leading-relaxed drop-shadow">
-              Sprawling royal lawns, air-conditioned banquet halls, authentic
-              Awadhi catering, and ceremonial coordination for up to{" "}
-              {capacityFormatted} guests.
-            </p>
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-lg mx-auto mb-8">
-              <button
-                type="button"
-                onClick={() => setIsBookingOpen(true)}
-                className="w-full sm:w-auto py-3.5 px-8 bg-amber-500 hover:bg-amber-400 text-stone-950 text-xs uppercase tracking-widest font-bold rounded-xl transition-all shadow-xl hover:shadow-amber-500/30 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>Book Your Royal Wedding</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsVoiceOpen(true)}
-                className="w-full sm:w-auto py-3.5 px-7 bg-stone-900/90 hover:bg-stone-800 text-amber-300 border border-amber-500/60 text-xs uppercase tracking-widest font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-              >
-                <PhoneCall className="w-4 h-4 text-amber-400 animate-pulse" />
-                <span>Instant AI Voice Call</span>
-              </button>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.14em] text-stone-300 font-mono">
-              <span className="flex items-center gap-1 text-amber-400">
-                <Star className="w-3.5 h-3.5 fill-amber-400" />
-                <span>Google {site.rating_value} / 5</span>
-              </span>
-              <span className="text-amber-500/60">◆</span>
-              <span>{site.weddings_hosted || 850}+ Weddings Hosted</span>
-              <span className="text-amber-500/60">◆</span>
-              <span>Capacity up to {capacityFormatted}</span>
-            </div>
-          </div>
-
-          {/* ======================================================== */}
-          {/* BOTTOM TIMELINE & LIVE SCRUB BAR                         */}
-          {/* Exactly matching the horizontal progress line in video   */}
-          {/* ======================================================== */}
-          <div className="absolute bottom-0 left-0 right-0 z-30 pb-4 px-6 sm:px-12 pointer-events-none select-none">
-            {/* Live Status Row */}
-            <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono tracking-[0.25em] text-white/70 uppercase mb-2">
-              <div className="flex items-center gap-3">
-                <span className="text-amber-400 font-bold">
-                  {timecodeString}
-                </span>
-                <span className="hidden md:inline text-white/30">|</span>
-                <span className="hidden md:inline text-white/60">
-                  {isIntro
-                    ? "PROLOGUE"
-                    : isClimax
-                    ? "ROYAL CLIMAX"
-                    : SCENES[Math.min(Math.round(storyStage), 3)]?.title}
-                </span>
-              </div>
-
-              {/* Diamond Star ✦ Ambient Audio Soundscape Toggle */}
-              <div className="pointer-events-auto flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={toggleAmbientAudio}
-                  className="px-2.5 py-1 rounded-full border border-white/20 hover:border-amber-400 bg-black/40 hover:bg-black/60 text-white text-[10px] tracking-wider transition-all cursor-pointer flex items-center gap-1.5 backdrop-blur-sm"
-                  title="Toggle 432Hz ambient palace soundscape"
-                >
-                  <span className="text-amber-400 text-sm leading-none animate-pulse">
-                    ✦
-                  </span>
-                  <span className="hidden sm:inline">
-                    {isAudioActive ? "SOUND: ON" : "SOUND: OFF"}
-                  </span>
-                  {isAudioActive ? (
-                    <Volume2 className="w-3 h-3 text-amber-400" />
-                  ) : (
-                    <VolumeX className="w-3 h-3 text-white/50" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Razor-thin 1px scrubber progress track */}
-            <div className="w-full h-[2px] bg-white/20 rounded-full overflow-hidden">
+              {/* Premium Action CTAs */}
               <div
-                style={{
-                  width: `${Math.min(Math.max(progress * 100, 0), 100)}%`,
-                  transition: "width 0.08s linear",
-                }}
-                className="h-full bg-gradient-to-r from-amber-400 via-amber-300 to-white shadow-[0_0_8px_rgba(251,191,36,0.8)]"
-              />
+                ref={ctaGroupRef}
+                className="flex flex-wrap items-center gap-4 pt-1"
+              >
+                {/* Primary CTA: Discover Venue */}
+                <button
+                  type="button"
+                  onClick={() => scrollToTarget("#venue", { offset: 20 })}
+                  className="group h-[52px] px-8 rounded-full bg-[#D6B779] hover:bg-[#c9a764] text-[#100F0D] text-xs font-semibold uppercase tracking-[0.18em] transition-all duration-300 shadow-[0_12px_32px_-8px_rgba(214,183,121,0.45)] hover:shadow-[0_16px_40px_-8px_rgba(214,183,121,0.6)] hover:-translate-y-0.5 flex items-center gap-2.5 cursor-pointer"
+                >
+                  <span>Discover Venue</span>
+                  <ArrowRight
+                    className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                    strokeWidth={2}
+                  />
+                </button>
+
+                {/* Secondary CTA: Book A Visit */}
+                <button
+                  type="button"
+                  onClick={() => setIsBookingOpen(true)}
+                  className="h-[52px] px-8 rounded-full border border-[#D6B779]/60 hover:border-[#D6B779] bg-[#100F0D]/40 hover:bg-[#D6B779]/10 text-[#F7F0E4] hover:text-[#D6B779] text-xs font-semibold uppercase tracking-[0.18em] transition-all duration-300 backdrop-blur-md hover:-translate-y-0.5 flex items-center gap-2.5 cursor-pointer"
+                >
+                  <Calendar className="w-4 h-4 text-[#D6B779]" strokeWidth={1.75} />
+                  <span>Book A Visit</span>
+                </button>
+              </div>
+
+              {/* Concise Trust Anchor Line */}
+              <div
+                ref={trustBadgeRef}
+                className="pt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] sm:text-xs tracking-[0.16em] uppercase text-[#C8C0B3]/80"
+              >
+                <span className="flex items-center gap-1.5 text-[#D6B779]">
+                  <Sparkles className="w-3.5 h-3.5 text-[#D6B779]" />
+                  <span>{site.rating_value || "4.8"}★ Luxury Rating</span>
+                </span>
+                <span className="text-[#D6B779]/40 hidden sm:inline">◆</span>
+                <span>{site.weddings_hosted || 520}+ Grand Weddings</span>
+                <span className="text-[#D6B779]/40 hidden sm:inline">◆</span>
+                <span>Up to {capacityFormatted} Guests</span>
+              </div>
             </div>
+          </div>
+
+          {/* ── Next Section Transition: Venue Introduction Reveal (Scroll-Linked) ── */}
+          <div
+            ref={venueIntroRef}
+            id="venue"
+            className="absolute inset-0 z-[25] flex items-center justify-center p-6 pointer-events-none opacity-0"
+          >
+            <div className="max-w-2xl w-full text-center space-y-5 sm:space-y-6 p-8 sm:p-12 rounded-3xl bg-[#100F0D]/90 backdrop-blur-xl border border-[#D6B779]/30 shadow-[0_24px_70px_rgba(0,0,0,0.85)]">
+              {/* Eyebrow Label */}
+              <div className="flex items-center justify-center gap-3 text-[11px] sm:text-xs font-semibold tracking-[0.24em] uppercase text-[#D6B779]">
+                <span className="w-6 h-[1px] bg-[#D6B779]/80" />
+                <span>The Estate &amp; Grounds · {site.city}</span>
+                <span className="w-6 h-[1px] bg-[#D6B779]/80" />
+              </div>
+
+              {/* Large Serif Heading: High-Impact */}
+              <h2 className="font-serif text-[32px] sm:text-[46px] lg:text-[52px] text-[#F7F0E4] leading-[1.12] [text-wrap:balance]">
+                Grand Lawns. Regal Elegance.
+              </h2>
+
+              {/* Concise Introduction: High-Impact Words */}
+              <p className="text-[#C8C0B3] text-sm sm:text-base leading-relaxed max-w-lg mx-auto font-light">
+                40,000 sq.ft of manicured emerald greenery, illuminated mandap canopies,
+                and timeless Awadhi hospitality.
+              </p>
+
+              {/* Transition Action Buttons */}
+              <div className="flex flex-wrap items-center justify-center gap-3.5 pt-1">
+                <button
+                  type="button"
+                  onClick={() => scrollToTarget("#tour360", { offset: 40 })}
+                  className="h-11 px-6 rounded-full bg-[#D6B779] hover:bg-[#c9a764] text-[#100F0D] text-xs font-semibold uppercase tracking-[0.16em] transition-all shadow-md flex items-center gap-2 cursor-pointer"
+                >
+                  <Compass className="w-4 h-4" />
+                  <span>Explore Grounds</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsBookingOpen(true)}
+                  className="h-11 px-6 rounded-full border border-[#D6B779]/60 hover:border-[#D6B779] text-[#F7F0E4] hover:text-[#D6B779] bg-transparent text-xs font-semibold uppercase tracking-[0.16em] transition-all flex items-center gap-2 cursor-pointer"
+                >
+                  <span>Schedule A Visit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Minimal Scroll Indicator at Bottom ── */}
+          <div
+            ref={scrollIndicatorRef}
+            className="relative z-20 pb-8 flex flex-col items-center justify-center gap-2.5 text-[#C8C0B3] pointer-events-none"
+          >
+            <span className="text-[10px] uppercase tracking-[0.3em] font-light text-[#D6B779]">
+              Scroll To Enter
+            </span>
+            <div className="w-[1px] h-9 bg-gradient-to-b from-[#D6B779] via-[#D6B779]/50 to-transparent relative overflow-hidden">
+              <span className="absolute top-0 left-0 w-full h-1/2 bg-[#F7F0E4] animate-[emberDrift_2s_ease-in-out_infinite]" />
+            </div>
+            <ArrowDown className="w-3.5 h-3.5 text-[#D6B779] animate-bounce" />
           </div>
         </div>
       </section>
 
-      {/* Modals triggered directly from Hero */}
+      {/* Online Booking & Consultation Modals */}
       <OnlineBookingModal
         isOpen={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}

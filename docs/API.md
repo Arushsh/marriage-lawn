@@ -117,19 +117,33 @@ Responses:
 
 Side effects: save lead, email owner, return WhatsApp prefill text in response optionally.
 
-## Owner endpoints (Phase 2)
+## Owner endpoints (implemented — staff JWT required)
+All routes require `Authorization: Bearer <access>` from a staff (`is_staff`) account. Refresh rotation + blacklist enabled. See `apps/owner/` for details.
+
+### Auth
 | Method | Path | Purpose |
 |---|---|---|
-| POST | `/auth/login/` | Get JWT access/refresh |
-| POST | `/auth/refresh/` | Refresh token |
-| GET | `/owner/enquiries/?status=new&search=` | List leads |
-| PATCH | `/owner/enquiries/{id}/` | Update status/note |
-| GET | `/owner/enquiries/export/` | CSV export |
-| GET/POST | `/owner/availability/` | List or set date status |
-| DELETE | `/owner/availability/{date}/` | Mark available again |
-| GET/POST/PATCH/DELETE | `/owner/gallery/` | Manage images |
-| PATCH | `/owner/site/` | Update settings |
-| GET | `/owner/stats/` | Leads count, conversion, upcoming dates |
+| POST | `/auth/login/` | `{username, password}` → `{access, refresh, user}` (non-staff rejected, throttled 20/h) |
+| POST | `/auth/refresh/` | `{refresh}` → new `{access, refresh}` |
+| GET | `/auth/me/` | Current user profile |
+
+### Content management
+| Method | Path | Purpose |
+|---|---|---|
+| GET/PATCH | `/owner/site/` | SiteSettings singleton (incl. `notify_email`) |
+| CRUD | `/owner/halls/` `/owner/facilities/` `/owner/packages/` `/owner/services/` `/owner/menu-categories/` `/owner/menu-items/` `/owner/reviews/` `/owner/faqs/` `/owner/gallery/` `/owner/videos/` | Full content management; asset fields accept multipart uploads or http(s) URLs |
+| POST | `/owner/gallery/bulk_order/` | `{"items": [{id, order}]}` |
+| GET/POST | `/owner/availability/` | List (with private notes) or bulk block `{dates[], status, note}` |
+| DELETE | `/owner/availability/{date}/` | Unblock a date |
+
+### CRM
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/owner/enquiries/?status=&search=` | List leads (paginated) |
+| PATCH | `/owner/enquiries/{id}/` | Update `status` / `owner_note` |
+| GET | `/owner/bookings/?status=&search=` | List bookings |
+| GET/PATCH | `/owner/bookings/{reference}/` | Update `status`, `admin_notes`, `paid_amount` (payment status + balance auto-derived; cancelling releases a free date) |
+| GET | `/owner/stats/` | Pipeline, revenue, conversion, recent activity |
 
 ## Payments (Phase 2)
 | Method | Path | Purpose |

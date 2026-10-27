@@ -52,7 +52,7 @@ interface EnquiryFormProps {
   onClearSelectedDate?: () => void;
 }
 
-export const EnquiryForm: React.FC<EnquiryFormProps> = ({
+export const    EnquiryForm: React.FC<EnquiryFormProps> = ({
   site,
   selectedDate,
   onClearSelectedDate,
@@ -159,7 +159,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
     );
 
     return (
-      <div className="bg-white rounded-none p-8 border border-accent space-y-6">
+      <div className="bg-black rounded-md p-8 border border-accent space-y-6">
         <div className="space-y-2">
           <span className="text-[10px] font-semibold text-accent uppercase tracking-[0.16em] block">
             Reservation Received
@@ -204,10 +204,10 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
     <form
       onSubmit={handleSubmit(onSubmit)}
       noValidate
-      className="bg-white rounded-none p-6 sm:p-8 border border-border space-y-5 shadow-none"
+      className="bg-[#081825] text-blue-400 rounded-md p-6 sm:p-8 border border-border space-y-5 shadow-none"
     >
       <div className="space-y-1">
-        <span className="text-[10px] font-semibold text-accent uppercase tracking-[0.16em] block">
+        <span className="text-[10px] font-semibold  uppercase tracking-[0.16em] block">
           Priority Inquiries
         </span>
         <h3 className="font-serif text-[22px] sm:text-[26px] font-normal leading-[1.25] text-primary">
@@ -220,7 +220,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* API / Rate limit error notice with WhatsApp fallback */}
       {apiError && (
-        <div className="p-4 rounded-none border border-red-300 bg-red-50 text-sm text-stone-800 space-y-3">
+        <div className="p-4 rounded-md border border-red-300 bg-red-50 text-sm text-stone-800 space-y-3">
           <p>{apiError.message}</p>
           {apiError.whatsappUrl && (
             <a
@@ -257,7 +257,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           aria-invalid={errors.name ? "true" : undefined}
           aria-describedby={errors.name ? "name-error" : undefined}
           {...register("name")}
-          className={`w-full h-12 px-4 rounded-none border text-base text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent ${
+          className={`w-full h-12 px-4 rounded-md border text-base text-text bg-[#081825] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent ${
             errors.name ? "border-red-400" : "border-border"
           }`}
         />
@@ -268,11 +268,11 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
 
       {/* Phone */}
       <div className="space-y-1.5">
-        <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-[0.12em] text-text">
+        <label htmlFor="phone" className="block text-xs bg-[#081825] font-semibold uppercase tracking-[0.12em] text-text">
           Mobile Number (10 Digits) <span className="text-primary">*</span>
         </label>
-        <div className="flex h-12 rounded-none border border-border overflow-hidden focus-within:ring-1 focus-within:ring-accent focus-within:border-accent">
-          <span className="bg-stone-50 px-4 text-sm text-accent font-mono flex items-center border-r border-border font-medium">
+        <div className="flex h-12 rounded-md border border-border  overflow-hidden focus-within:ring-1 focus-within:ring-accent focus-within:border-accent">
+          <span className="px-4 text-sm text-accent font-mono flex items-center border-r border-border font-medium">
             +91
           </span>
           <input
@@ -284,7 +284,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             aria-invalid={errors.phone ? "true" : undefined}
             aria-describedby={errors.phone ? "phone-error" : undefined}
             {...register("phone")}
-            className="w-full h-full px-4 text-base text-text bg-white focus:outline-none"
+            className="w-full h-full px-4 text-base text-text bg-[#081825] focus:outline-none"
           />
         </div>
         {errors.phone && (
@@ -304,7 +304,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             aria-invalid={errors.event_type ? "true" : undefined}
             aria-describedby={errors.event_type ? "event-type-error" : undefined}
             {...register("event_type")}
-            className="w-full h-12 px-3.5 rounded-none border border-border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+            className="w-full h-12 px-3.5 rounded-md border border-border text-sm text-text bg-[#081825] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
           >
             <option value="wedding">Wedding</option>
             <option value="reception">Reception</option>
@@ -327,7 +327,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
             aria-invalid={errors.guest_count ? "true" : undefined}
             aria-describedby={errors.guest_count ? "guest-count-error" : undefined}
             {...register("guest_count")}
-            className="w-full h-12 px-3.5 rounded-none border border-border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
+            className="w-full h-12 px-3.5 rounded-md border border-border text-sm text-text bg-[#081825] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent"
           >
             <option value="under_200">Under 200</option>
             <option value="200_500">200 – 500</option>
@@ -368,7 +368,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           aria-invalid={errors.event_date ? "true" : undefined}
           aria-describedby={errors.event_date ? "event-date-error" : undefined}
           {...register("event_date")}
-          className={`w-full h-12 px-4 rounded-none border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent ${
+          className={`w-full h-12 px-4 rounded-md border text-sm text-text bg-[#081825] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent ${
             errors.event_date ? "border-red-400" : "border-border"
           }`}
         />
@@ -395,7 +395,7 @@ export const EnquiryForm: React.FC<EnquiryFormProps> = ({
           aria-invalid={errors.message ? "true" : undefined}
           aria-describedby={errors.message ? "message-error" : undefined}
           {...register("message")}
-          className="w-full p-4 rounded-none border border-border text-sm text-text bg-white focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none"
+          className="w-full p-4 rounded-md border border-border text-sm text-text bg-[#081825] focus:outline-none focus:ring-1 focus:ring-accent focus:border-accent resize-none"
         />
         {errors.message && (
           <p id="message-error" role="alert" className="text-sm text-red-700">{errors.message.message}</p>

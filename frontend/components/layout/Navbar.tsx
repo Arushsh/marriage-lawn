@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, PhoneCall, Calendar } from "lucide-react";
+import { Menu, X, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SiteSettings } from "@/types/api";
 import { InstantCallModal } from "@/components/voice/InstantCallModal";
@@ -25,14 +25,22 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
 
   React.useEffect(() => {
     if (!isHomepage) {
-      setIsScrolledPastHero(true);
-      return;
+      const timer = setTimeout(() => setIsScrolledPastHero(true), 0);
+      return () => clearTimeout(timer);
     }
 
     const checkScroll = () => {
-      // Threshold: when user scrolls near the end of the Hero (approx 2.5 screens)
-      const threshold = window.innerHeight * 2.6;
-      setIsScrolledPastHero(window.scrollY > threshold);
+      // Transparent over the night hero and the palace film; the glass
+      // bar solidifies over the content passages.
+      const navBottom = 72;
+      const home = document.getElementById("home");
+      const film = document.getElementById("palace-film");
+      const overHome = home ? home.getBoundingClientRect().bottom > navBottom : false;
+      const filmRect = film?.getBoundingClientRect();
+      const overFilm = filmRect
+        ? filmRect.top < navBottom && filmRect.bottom > navBottom
+        : false;
+      setIsScrolledPastHero(!(overHome || overFilm));
     };
 
     window.addEventListener("scroll", checkScroll, { passive: true });
@@ -42,11 +50,10 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
   }, [isHomepage]);
 
   const navLinks = [
-    { label: "360° Lawn View", href: "/#virtual-tour" },
+    { label: "Venue", href: "/#venue" },
+    { label: "Experiences", href: "/#palace-film" },
     { label: "Gallery", href: "/gallery" },
-    { label: "Menu", href: "/menu" },
     { label: "Packages", href: "/packages" },
-    { label: "Availability", href: "/#availability" },
     { label: "Contact", href: "/contact" },
   ];
 
@@ -62,15 +69,15 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isTransparent
-            ? "bg-stone-950/85 backdrop-blur-md border-b border-amber-500/20 text-white shadow-xl"
-            : "bg-bg/95 backdrop-blur-md border-b border-border text-text shadow-sm"
+            ? "bg-transparent border-b border-transparent"
+            : "bg-[#100F0D]/90 backdrop-blur-md border-b border-[#D6B779]/20 shadow-lg"
         }`}
       >
-        <div className="max-w-[1280px] mx-auto px-4 sm:px-8 h-18 flex items-center justify-between">
-          {/* Brand / Logo with Royal Heritage Monogram */}
-          <Link href="/" className="flex items-center gap-3">
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-3 group">
             {site.logo ? (
               <div className="relative h-10 w-36">
                 <Image
@@ -82,103 +89,86 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
                 />
               </div>
             ) : (
-              <div className="flex items-center gap-2.5">
-                <span
-                  className={`h-8 px-3 border-2 rounded-lg flex items-center justify-center font-serif text-sm font-semibold tracking-wider transition-colors shrink-0 ${
-                    isTransparent
-                      ? "border-amber-400 text-amber-300"
-                      : "border-accent text-primary"
-                  }`}
-                >
-                  SPL
+              <div className="flex items-center gap-3">
+                <span className="h-9 w-9 rotate-45 border border-[#D6B779]/80 flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:rotate-[135deg] bg-[#100F0D]/40">
+                  <span className="-rotate-45 font-serif text-[11px] tracking-widest text-[#D6B779] inline-block transition-transform duration-500 group-hover:-rotate-[135deg]">
+                    SPL
+                  </span>
                 </span>
-                <span
-                  className={`font-serif text-lg sm:text-xl tracking-[0.05em] uppercase font-medium transition-colors ${
-                    isTransparent ? "text-white drop-shadow" : "text-primary"
-                  }`}
-                >
-                  {site.venue_name}
-                </span>
+                <div className="flex flex-col">
+                  <span className="font-serif text-lg sm:text-xl tracking-[0.03em] text-[#F7F0E4]">
+                    {site.venue_name}
+                  </span>
+                  <span className="text-[9px] uppercase tracking-[0.25em] text-[#D6B779]">
+                    Wedding Estate &amp; Lawn
+                  </span>
+                </div>
               </div>
             )}
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-7">
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => {
               const active = isLinkActive(link.href);
               return (
                 <Link
                   key={link.label}
                   href={link.href}
-                  className={`text-xs uppercase tracking-[0.14em] transition-colors relative py-1.5 ${
+                  className={`text-xs uppercase tracking-[0.16em] relative py-1.5 transition-colors group font-medium ${
                     active
-                      ? isTransparent
-                        ? "font-semibold text-amber-300 border-b border-amber-400"
-                        : "font-semibold text-primary border-b border-accent"
-                      : isTransparent
-                      ? "font-medium text-white/80 hover:text-white"
-                      : "font-medium text-text hover:text-primary"
+                      ? "text-[#D6B779] font-semibold"
+                      : "text-[#C8C0B3] hover:text-[#F7F0E4]"
                   }`}
                 >
                   {link.label}
+                  <span
+                    className={`absolute left-0 -bottom-0.5 h-[1.5px] bg-[#D6B779] transition-all duration-300 origin-left ${
+                      active ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
                 </Link>
               );
             })}
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-3.5">
-            {/* AI Call Me Trigger Button */}
+          <div className="hidden md:flex items-center gap-4">
             <button
               type="button"
               onClick={() => setIsVoiceModalOpen(true)}
-              className={`px-3.5 py-1.5 rounded-full border text-xs uppercase tracking-wider font-semibold transition-all flex items-center gap-2 cursor-pointer shadow-sm group ${
-                isTransparent
-                  ? "border-amber-400/50 bg-stone-900/60 hover:bg-stone-900/80 text-amber-300 backdrop-blur-md"
-                  : "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-primary"
-              }`}
+              className="px-3.5 py-2 rounded-full text-xs uppercase tracking-wider font-semibold flex items-center gap-2 cursor-pointer transition-all hover:-translate-y-0.5 border border-[#D6B779]/30 bg-[#100F0D]/50 text-[#C8C0B3] hover:text-[#F7F0E4] hover:border-[#D6B779]/60 backdrop-blur-md"
               title="Request instant AI phone call"
             >
-              <PhoneCall className="w-3.5 h-3.5 text-amber-400 animate-pulse group-hover:scale-110 transition-transform" />
-              <span>AI Call Me</span>
+              <PhoneCall className="w-3.5 h-3.5 text-[#D6B779]" />
+              <span>AI Call</span>
             </button>
 
-            {/* Direct Booking Modal Button */}
+            {/* Refined Gold-Outline Book a Visit button */}
             <button
               type="button"
               onClick={() => setIsBookingModalOpen(true)}
-              className="cursor-pointer"
+              className="h-10 px-6 rounded-full border border-[#D6B779] text-[#F7F0E4] hover:bg-[#D6B779] hover:text-[#100F0D] text-xs uppercase tracking-[0.16em] font-semibold transition-all duration-300 cursor-pointer shadow-[0_0_15px_rgba(214,183,121,0.15)] hover:shadow-[0_0_22px_rgba(214,183,121,0.35)] active:scale-95"
             >
-              <Button
-                size="sm"
-                variant={isTransparent ? "secondary" : "primary"}
-                className={
-                  isTransparent
-                    ? "bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold border-2 border-amber-300 rounded-lg shadow-lg shadow-amber-500/20"
-                    : ""
-                }
-              >
-                Book Online
-              </Button>
+              Book a Visit
             </button>
           </div>
 
-          {/* Mobile Hamburger Button */}
+          {/* Mobile actions */}
           <div className="flex items-center gap-2 md:hidden">
             <button
               type="button"
               onClick={() => setIsVoiceModalOpen(true)}
-              className="p-2 text-primary border border-accent/40 rounded bg-accent/10"
+              className="p-2.5 rounded-lg border border-[#D6B779]/30 text-[#F7F0E4] bg-[#100F0D]/60"
               aria-label="Request AI Call"
             >
-              <PhoneCall className="w-4 h-4 text-accent animate-pulse" />
+              <PhoneCall className="w-4 h-4 text-[#D6B779]" />
             </button>
 
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-text hover:text-primary transition-colors cursor-pointer rounded-none border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="p-2.5 rounded-lg border border-[#D6B779]/30 text-[#F7F0E4] bg-[#100F0D]/60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D6B779]"
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav-menu"
@@ -192,10 +182,13 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
           </div>
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile drawer */}
         {mobileMenuOpen && (
-          <div id="mobile-nav-menu" className="md:hidden bg-bg border-b border-border px-4 py-6 space-y-4">
-            <div className="flex flex-col space-y-3">
+          <div
+            id="mobile-nav-menu"
+            className="md:hidden bg-[#100F0D]/95 backdrop-blur-xl border-b border-[#D6B779]/20 px-5 py-6 space-y-4"
+          >
+            <div className="flex flex-col space-y-1">
               {navLinks.map((link) => {
                 const active = isLinkActive(link.href);
                 return (
@@ -203,28 +196,29 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
                     key={link.label}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`text-xs uppercase tracking-[0.14em] transition-colors py-2 flex items-center justify-between ${
+                    className={`text-xs uppercase tracking-[0.16em] py-3.5 px-3 rounded-lg flex items-center justify-between transition-colors ${
                       active
-                        ? "text-primary font-semibold pl-2 border-l-2 border-accent"
-                        : "text-text hover:text-primary"
+                        ? "text-[#D6B779] font-semibold bg-white/5"
+                        : "text-[#F7F0E4] hover:text-[#D6B779] hover:bg-white/5"
                     }`}
                   >
                     <span>{link.label}</span>
+                    <span className="text-[#D6B779]/60">◆</span>
                   </Link>
                 );
               })}
             </div>
 
-            <div className="pt-3 border-t border-border space-y-2">
+            <div className="pt-4 border-t border-[#D6B779]/20 space-y-2.5">
               <button
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   setIsVoiceModalOpen(true);
                 }}
-                className="w-full py-3 px-4 rounded border border-amber-500/50 bg-amber-500/10 text-primary text-xs uppercase tracking-wider font-semibold flex items-center justify-center gap-2"
+                className="w-full h-11 rounded-lg border border-[#D6B779]/30 bg-white/5 text-[#F7F0E4] text-xs uppercase tracking-wider font-semibold flex items-center justify-center gap-2 cursor-pointer"
               >
-                <PhoneCall className="w-4 h-4 text-accent" />
+                <PhoneCall className="w-4 h-4 text-[#D6B779]" />
                 <span>Instant AI Voice Call</span>
               </button>
 
@@ -234,11 +228,9 @@ export const Navbar: React.FC<NavbarProps> = ({ site }) => {
                   setMobileMenuOpen(false);
                   setIsBookingModalOpen(true);
                 }}
-                className="w-full"
+                className="w-full h-12 rounded-lg border border-[#D6B779] bg-[#D6B779] text-[#100F0D] text-xs uppercase tracking-[0.16em] font-semibold flex items-center justify-center cursor-pointer shadow-[0_0_18px_rgba(214,183,121,0.25)]"
               >
-                <Button className="w-full justify-center !h-12" variant="primary">
-                  Book Online
-                </Button>
+                Book a Visit
               </button>
             </div>
           </div>

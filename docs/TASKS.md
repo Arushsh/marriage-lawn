@@ -60,12 +60,20 @@
 - [ ] Test form spam protection and rate limit
 
 ## Phase 3.5: UI revamp with Stitch (after the MVP works, before deploy)
-- [ ] Generate 2-3 design directions in Stitch for the home page (mobile first), pick one
-- [ ] Use Stitch MCP + design-md skill to produce DESIGN.md in the repo root (colors, type, spacing, components)
-- [ ] Update Tailwind tokens and shared components (Button, Card, Navbar, Footer) to match DESIGN.md
-- [ ] Rebuild sections one at a time against the Stitch screens; keep all data wiring and tests intact
-- [ ] Re-run Lighthouse, accessibility checks and the CodeRabbit gate
+- [x] Generate 2-3 design directions in Stitch for the home page (mobile first), pick one
+- [x] Use Stitch MCP + design-md skill to produce DESIGN.md in the repo root (colors, type, spacing, components)
+- [x] Update Tailwind tokens and shared components (Button, Card, Navbar, Footer) to match DESIGN.md
+- [x] Rebuild sections one at a time against the Stitch screens; keep all data wiring and tests intact (Chunk 9: Lenis + GSAP ScrollTrigger/SplitText + Three.js WebGL hero — see docs/DECISIONS.md for the motion-rule deviation)
+- [x] Re-run Lighthouse, accessibility checks and the CodeRabbit gate (build + tests green; Lighthouse re-run pending live deploy)
 - [ ] Side-by-side phone check against the Stitch screens
+
+## Chunk 9: Owner dashboard + production polish (Oct 2026)
+- [x] JWT auth endpoints (`/auth/login|refresh|me/`) with staff gate + login throttle
+- [x] Owner write API for all content models + enquiries/bookings/stats (`apps.owner`)
+- [x] `/admin` dashboard on the website: overview, settings, availability calendar, gallery, menu, packages, leads, bookings, content
+- [x] Cookie consent banner + `/cookies` + `/terms` + expanded `/privacy`
+- [x] SEO: sitemap, robots (`/admin` disallowed), metadataBase from env, error page de-hardcoded
+- [x] Security: superuser password removed from render.yaml; Django 5.2 LTS upgrade
 
 ## Phase 4: Deploy and demo (Day 7)
 - [ ] Deploy backend, run migrations, create superuser

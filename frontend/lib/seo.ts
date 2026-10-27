@@ -15,13 +15,15 @@ export function constructMetadata(
 ): Metadata {
   const title = options.title || site.meta_title || `${site.venue_name} | Marriage Lawn & Event Venue in ${site.city}`;
   const description = options.description || site.meta_description || site.about_text || site.tagline;
-  const url = options.path ? `https://example.com${options.path}` : "https://example.com";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://example.com";
+  const url = options.path ? `${siteUrl}${options.path}` : siteUrl;
   const ogImage = options.image || site.hero_image || site.logo;
 
   return {
     title,
     description,
-    metadataBase: new URL("https://example.com"),
+    metadataBase: new URL(siteUrl),
     robots: options.noIndex ? { index: false, follow: false } : undefined,
     openGraph: {
       title,

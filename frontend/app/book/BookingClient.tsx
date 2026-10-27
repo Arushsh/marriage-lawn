@@ -6,6 +6,7 @@ import { OnlineBookingModal } from "@/components/booking/OnlineBookingModal";
 import { InstantCallModal } from "@/components/voice/InstantCallModal";
 import { Calendar, PhoneCall, ShieldCheck, Sparkles, Building, Award } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { TiltCard } from "@/components/animations/TiltCard";
 
 interface BookingClientProps {
   site: SiteSettings;
@@ -13,7 +14,7 @@ interface BookingClientProps {
   packages: Package[];
 }
 
-export const BookingClient: React.FC<BookingClientProps> = ({ site, halls, packages }) => {
+export const BookingClient: React.FC<BookingClientProps> = ({ halls }) => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isVoiceOpen, setIsVoiceOpen] = useState(false);
   const [selectedHallId, setSelectedHallId] = useState<number | undefined>(undefined);
@@ -65,7 +66,7 @@ export const BookingClient: React.FC<BookingClientProps> = ({ site, halls, packa
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {halls.map((hall) => (
-            <div
+            <TiltCard
               key={hall.id}
               className="bg-white border border-border hover:border-accent transition-colors shadow-sm flex flex-col justify-between group"
             >
@@ -102,7 +103,7 @@ export const BookingClient: React.FC<BookingClientProps> = ({ site, halls, packa
                   <span>Book {hall.name}</span>
                 </Button>
               </div>
-            </div>
+            </TiltCard>
           ))}
         </div>
       </div>

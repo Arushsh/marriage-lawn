@@ -80,19 +80,36 @@
 
 ---
 
+## Chunk 9 — Production revamp (Oct 2026) — COMPLETE
+
+Frontend + backend overhaul requested by the venue owner:
+
+| Area | Delivered |
+|---|---|
+| Smooth scroll | Lenis wired into the GSAP ticker; all native smooth-scroll call sites routed through `lib/scroll.ts`; anchor offsets via Lenis `anchors` |
+| WebGL hero | Three.js gold particle film title ("MAHAL") with pointer repulsion + scroll dissolve; Hero film ported from per-frame React state to GSAP ScrollTrigger + ticker with refs (no re-render per frame) |
+| 3D accents | `AnimatedHeading` (SplitText 3D char reveals) on all 11 section headings; `TiltCard` on package + hall cards; `GoldDustLayer` in the footer; 404 re-skinned to DESIGN.md |
+| Owner auth | SimpleJWT `/auth/login|refresh|me/` (staff-only, throttled); rotation + blacklist |
+| Owner API | `apps.owner` — write endpoints for site settings, halls, facilities, packages, services, menu, reviews, FAQs, gallery (+uploads), videos, availability, enquiries, bookings, stats |
+| Owner dashboard | `/admin` on the website: overview metrics, settings editor, availability calendar (block/unblock), gallery manager, menu, packages, leads pipeline, bookings (+offline payments), content tabs |
+| Legal & cookies | Cookie consent banner + `/cookies` + `/terms`; privacy policy extended; consent persisted + re-openable from footer |
+| SEO | Sitemap gains `/menu`, `/book`, `/terms`, `/cookies`; robots disallows `/admin`; `metadataBase` from `NEXT_PUBLIC_SITE_URL`; error page no longer hardcodes a phone number |
+| Security | Committed superuser password removed from `render.yaml`; Django 5.1.4 → 5.2.18 LTS |
+
+Verification: backend 43/43 tests pass; `tsc` clean; `next build` green (26 routes); live smoke-tested login → edit → public site flow.
+
+---
+
 ## What is left
 
 | Item | Phase |
 |---|---|
-| Backend throttle on POST /enquiries/ | Phase 1 backend |
 | Server-side honeypot validation | Phase 1 backend |
 | Lock ALLOWED_HOSTS / CORS to production domain | Phase 4 deploy |
-| Seed realistic demo data | Phase 4 |
-| Deploy backend (Render/Railway) + frontend (Vercel) | Phase 4 |
+| Deploy backend (Render) + frontend (Vercel) with updated env vars | Phase 4 |
 | Domain connection + env var wiring | Phase 4 |
 | Test enquiry email delivery | Phase 4 |
 | Lighthouse CI run against live deployment | Phase 4 |
-| UI revamp with Stitch MCP | Phase 3.5 |
 | AI FAQ chatbot (Gemini API) | Phase 6 |
 
 ---

@@ -7,6 +7,8 @@ environment (production / Render / Railway).  Never commit a real .env file.
 
 from pathlib import Path
 import os
+from datetime import timedelta
+
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
 
     # Third-party
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "cloudinary",
     "cloudinary_storage",
@@ -53,6 +56,7 @@ INSTALLED_APPS = [
     "apps.chatbot",
     "apps.voice_calling",
     "apps.dashboard",
+    "apps.owner",
 ]
 
 # ─── Middleware ────────────────────────────────────────────────────────────────
@@ -149,6 +153,9 @@ else:
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        # JWT first: Bearer tokens for the owner dashboard SPA (cross-origin,
+        # third-party cookies are unreliable Vercel -> Render).
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -163,9 +170,21 @@ REST_FRAMEWORK = {
         "user": "50000/hour" if DEBUG else "10000/hour",
         # Custom scopes (applied per view)
         "enquiry": "100/hour" if DEBUG else "10/hour",
+        "auth_login": "60/hour" if DEBUG else "20/hour",
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 24,
+}
+
+# ─── SimpleJWT (owner dashboard) ──────────────────────────────────────────────
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
 }
 
 # ─── CORS ─────────────────────────────────────────────────────────────────────

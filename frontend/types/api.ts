@@ -22,6 +22,8 @@ export interface SiteSettings {
   rating_value: string;
   rating_count: number;
   weddings_hosted: number;
+  events_hosted: number;
+  years_of_experience: number;
   primary_color: string;
   accent_color: string;
   logo: string;
@@ -134,7 +136,7 @@ export interface ChatbotResponse {
   intent: string;
   matched_faq_id: number | null;
   suggestions: string[];
-  dynamic_data: Record<string, any>;
+  dynamic_data: Record<string, unknown>;
 }
 
 export interface BookingPayload {

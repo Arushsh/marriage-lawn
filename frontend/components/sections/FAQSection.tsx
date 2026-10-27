@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FAQ } from "@/types/api";
 import { ChevronDown } from "lucide-react";
 import { FadeUp } from "@/components/ui/FadeUp";
+import { AnimatedHeading } from "@/components/animations/AnimatedHeading";
 
 interface FAQSectionProps {
   faqs: FAQ[];
@@ -25,26 +26,24 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
   };
 
   return (
-    <section
-      id="faq"
-      className="py-20 sm:py-32 bg-surface border-b border-border"
-    >
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-12 sm:space-y-16">
+    <section id="faq" className="relative py-20 sm:py-32 passage-pearl">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 space-y-12 sm:space-y-16 flex flex-col items-center">
         <FadeUp>
-          <div className="space-y-3">
-            <span className="text-[11px] font-semibold text-accent uppercase tracking-[0.18em] block">
-              Estate Guidelines &amp; Concierge FAQ
-            </span>
-            <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-primary">
+          <div className="space-y-4 max-w-3xl">
+            <AnimatedHeading
+              as="h2"
+              className="font-serif text-[30px] sm:text-[44px] leading-[1.12] text-ink"
+            >
               Frequently Addressed Inquiries
-            </h2>
-            <p className="text-[15px] sm:text-[17px] text-muted leading-[1.65] max-w-[62ch]">
-              Important clarifications regarding ceremony bookings, outside vendor protocols, catering facilities, and sound curfew.
+            </AnimatedHeading>
+            <p className="text-[15px] sm:text-[17px] text-muted leading-[1.7] max-w-[62ch]">
+              Important clarifications regarding ceremony bookings, outside vendor protocols,
+              catering facilities, and sound curfew.
             </p>
           </div>
         </FadeUp>
 
-        {/* Clean accordion list with hairline dividers */}
+        {/* Accordion list with zari hairlines */}
         <div className="max-w-[900px] divide-y divide-border border-y border-border">
           {displayedFaqs.map((faq, index) => {
             const isOpen = openIndex === index;
@@ -59,17 +58,20 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
                   aria-expanded={isOpen}
                   aria-controls={contentId}
                   onClick={() => toggleAccordion(index)}
-                  className="w-full flex items-center justify-between text-left gap-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-none py-1 cursor-pointer"
+                  className="w-full flex items-center justify-between text-left gap-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rani rounded-lg py-1 cursor-pointer"
                 >
-                  <span className="font-serif text-[19px] sm:text-[22px] font-normal text-text group-hover:text-primary transition-colors leading-[1.3]">
+                  <span className="font-serif text-[19px] sm:text-[22px] text-ink group-hover:text-zari-bright transition-colors leading-[1.3]">
                     {faq.question}
                   </span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-accent shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-primary" : ""
+                  <span
+                    className={`shrink-0 h-8 w-8 flex items-center justify-center rounded-full border transition-all duration-300 ${
+                      isOpen
+                        ? "rotate-180 border-rani/60 text-rani bg-rani/10"
+                        : "border-border text-muted group-hover:text-ink group-hover:border-border-strong"
                     }`}
-                    strokeWidth={1.5}
-                  />
+                  >
+                    <ChevronDown className="w-4 h-4" strokeWidth={1.5} />
+                  </span>
                 </button>
 
                 {isOpen && (
@@ -77,7 +79,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
                     id={contentId}
                     role="region"
                     aria-labelledby={headerId}
-                    className="pt-3 pr-8 sm:pr-12 text-[15px] sm:text-[16px] text-muted leading-[1.65]"
+                    className="pt-3 pr-8 sm:pr-12 text-[15px] sm:text-[16px] text-muted leading-[1.7]"
                   >
                     <p>{faq.answer}</p>
                   </div>

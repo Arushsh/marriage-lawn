@@ -1,9 +1,12 @@
 """
-API v1 URL routes — all public endpoints.
-Owner / dashboard routes are Phase 2 (JWT-protected).
+API v1 URL routes.
+
+Public read endpoints + booking/enquiry creation are open; everything under
+owner/ requires a staff JWT (the website /admin dashboard), and auth/ issues
+those tokens.
 """
 
-from django.urls import path
+from django.urls import include, path
 from apps.venue.views import (
     SiteSettingsView,
     HallListView,
@@ -25,8 +28,18 @@ from apps.bookings.views import (
 from apps.chatbot.views import ChatbotQueryView, ChatbotSuggestionsView
 from apps.voice_calling.views import VoiceWebhookView, VoiceCallTriggerView, VoiceCallbackRequestView
 from apps.dashboard.views import api_dashboard_metrics_view
+from apps.owner import urls as owner_urls
+from apps.owner.auth_views import OwnerLoginView, OwnerMeView, OwnerRefreshView
 
 urlpatterns = [
+    # Owner dashboard auth (JWT)
+    path("auth/login/",  OwnerLoginView.as_view(),  name="auth-login"),
+    path("auth/refresh/", OwnerRefreshView.as_view(), name="auth-refresh"),
+    path("auth/me/",     OwnerMeView.as_view(),     name="auth-me"),
+
+    # Owner / dashboard routes (staff JWT required)
+    path("owner/", include(owner_urls)),
+
     # Venue / content
     path("site/",         SiteSettingsView.as_view(),       name="site-settings"),
     path("halls/",        HallListView.as_view(),           name="hall-list"),

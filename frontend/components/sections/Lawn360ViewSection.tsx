@@ -7,8 +7,6 @@ import {
   Maximize2,
   Minimize2,
   RotateCcw,
-  Sparkles,
-  Info,
   MapPin,
   Play,
   Pause,
@@ -20,6 +18,7 @@ import {
 import { FadeUp } from "@/components/ui/FadeUp";
 import { Button } from "@/components/ui/Button";
 import { OnlineBookingModal } from "@/components/booking/OnlineBookingModal";
+import { AnimatedHeading } from "@/components/animations/AnimatedHeading";
 
 interface Hotspot {
   id: string;
@@ -247,9 +246,12 @@ export const Lawn360ViewSection: React.FC = () => {
                 <Compass className="w-3.5 h-3.5 text-[#B8860B] animate-spin" style={{ animationDuration: "12s" }} />
                 <span>Interactive 360° Virtual Lawn Walkthrough</span>
               </div>
-              <h2 className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-[#6B1426]">
-                Explore The Lawn in 360° Panoramas
-              </h2>
+              <AnimatedHeading
+              as="h2"
+              className="font-serif text-[30px] sm:text-[42px] font-normal leading-[1.2] text-[#6B1426]"
+            >
+              Explore The Lawn in 360° Panoramas
+            </AnimatedHeading>
               <p className="text-[15px] sm:text-[17px] text-stone-600 leading-[1.65] max-w-[62ch]">
                 Take a virtual stroll across our 40,000 sq.ft royal grounds. Drag to look around in 360 degrees, inspect the Mandap setup, banquet pavilion, and guest capacity landmarks.
               </p>

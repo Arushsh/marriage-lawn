@@ -1,5 +1,5 @@
 # Core
-Django==5.1.4
+Django==5.2.18                # 5.2 LTS — 5.1 is EOL; fixes Py3.13+ compat
 djangorestframework==3.15.2
 django-cors-headers==4.4.0
 
@@ -12,7 +12,7 @@ psycopg==3.2.4
 psycopg-binary==3.2.4        # binary wheel for Linux containers on Render
 dj-database-url==2.3.0       # supports psycopg3 engine
 
-# Auth (kept for Phase 2 JWT, installed now so imports don't break)
+# Auth (owner dashboard JWT — /api/v1/auth/*)
 djangorestframework-simplejwt==5.3.1
 
 # Media / images
