@@ -8,9 +8,7 @@
  */
 
 import { getValidAccessToken } from "./auth";
-
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+import { getApiBase } from "@/lib/api";
 
 export class UnauthorizedError extends Error {
   constructor() {
@@ -51,7 +49,7 @@ export async function adminFetch<T = unknown>(
   }
 
   const doFetch = () =>
-    fetch(`${API_BASE}${path}`, { ...options, headers, credentials: "omit" });
+    fetch(`${getApiBase()}${path}`, { ...options, headers, credentials: "omit" });
 
   let res = await doFetch();
 

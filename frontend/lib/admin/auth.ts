@@ -8,6 +8,8 @@
  * blocked by modern browsers. Contract matches docs/API.md.
  */
 
+import { getApiBase } from "@/lib/api";
+
 const ACCESS_KEY = "ml_admin_access";
 const REFRESH_KEY = "ml_admin_refresh";
 const USER_KEY = "ml_admin_user";
@@ -89,8 +91,7 @@ export async function getValidAccessToken(): Promise<string | null> {
   if (!refreshInFlight) {
     refreshInFlight = (async () => {
       try {
-        const apiBase =
-          process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+        const apiBase = getApiBase();
         const res = await fetch(`${apiBase}/auth/refresh/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -122,15 +123,22 @@ export async function login(
   username: string,
   password: string
 ): Promise<AdminUser> {
-  const apiBase =
-    process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
-  const res = await fetch(`${apiBase}/auth/login/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
+  const apiBase = getApiBase();
+  let res: Response;
+  try {
+    res = await fetch(`${apiBase}/auth/login/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+  } catch {
+    throw new Error(
+      `Cannot connect to backend server at ${apiBase}. If using Render free tier, the server may take ~50s to wake up. Please wait a moment and try again.`
+    );
+  }
+
   if (!res.ok) {
-    let message = "Login failed. Check your credentials.";
+    let message = "Login failed. Check your username and password.";
     try {
       const data = await res.json();
       const detail = data.detail || data.non_field_errors?.[0] || data.message;
