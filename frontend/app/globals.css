@@ -129,7 +129,7 @@ body {
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
+body:not(:has(.admin-root)) :is(h1, h2, h3, h4, h5, h6) {
   font-family: var(--font-serif);
   font-weight: 500;
   color: var(--c-ink);
@@ -137,10 +137,32 @@ h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
 }
 
-h1 { font-size: clamp(40px, 5.2vw, 72px); letter-spacing: -0.015em; }
-h2 { font-size: clamp(30px, 3.6vw, 48px); letter-spacing: -0.01em; }
-h3 { font-size: clamp(20px, 2vw, 26px); }
-h4 { font-size: 19px; }
+body:not(:has(.admin-root)) h1 { font-size: clamp(40px, 5.2vw, 72px); letter-spacing: -0.015em; }
+body:not(:has(.admin-root)) h2 { font-size: clamp(30px, 3.6vw, 48px); letter-spacing: -0.01em; }
+body:not(:has(.admin-root)) h3 { font-size: clamp(20px, 2vw, 26px); }
+body:not(:has(.admin-root)) h4 { font-size: 19px; }
+
+/* ── Admin Dashboard Protected Styles ── */
+.admin-root {
+  background-color: #fafaf9 !important;
+  color: #1c1917 !important;
+}
+
+.admin-root h1,
+.admin-root h2,
+.admin-root h3,
+.admin-root h4,
+.admin-root h5,
+.admin-root h6 {
+  color: inherit !important;
+  line-height: 1.25 !important;
+  text-wrap: unset !important;
+  letter-spacing: normal !important;
+}
+
+.admin-root p {
+  color: inherit;
+}
 
 p { line-height: 1.7; }
 

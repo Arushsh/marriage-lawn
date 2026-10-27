@@ -3,18 +3,7 @@ import { Bodoni_Moda, Manrope } from "next/font/google";
 import "./globals.css";
 import { getSiteSettings } from "@/lib/api";
 import { constructMetadata, generateEventVenueSchema } from "@/lib/seo";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { StickyActionBar } from "@/components/layout/StickyActionBar";
-import { FloatingWhatsApp } from "@/components/layout/FloatingWhatsApp";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { CookieConsent } from "@/components/layout/CookieConsent";
-import { SmoothScrollProvider } from "@/components/animations/SmoothScrollProvider";
-import dynamic from "next/dynamic";
-
-// Deferred: not needed for initial paint
-const ZariCursor = dynamic(() => import("@/components/layout/ZariCursor").then(m => ({ default: m.ZariCursor })));
-const ChatbotWidget = dynamic(() => import("@/components/chatbot/ChatbotWidget").then(m => ({ default: m.ChatbotWidget })));
+import { PublicLayoutChrome } from "@/components/layout/PublicLayoutChrome";
 
 
 const bodoni = Bodoni_Moda({
@@ -75,17 +64,7 @@ export default async function RootLayout({
         >
           Skip to main content
         </a>
-        <ZariCursor />
-        <Navbar site={site} />
-        <main id="main-content" className="flex-1 w-full">
-          <SmoothScrollProvider>{children}</SmoothScrollProvider>
-        </main>
-        <Footer site={site} />
-        <StickyActionBar site={site} />
-        <FloatingWhatsApp site={site} />
-        <ThemeToggle />
-        <ChatbotWidget site={site} />
-        <CookieConsent />
+        <PublicLayoutChrome site={site}>{children}</PublicLayoutChrome>
       </body>
     </html>
   );

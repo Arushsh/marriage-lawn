@@ -9,7 +9,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isLogin = pathname === "/admin/login";
 
   if (isLogin) {
-    return <>{children}</>;
+    return <div className="admin-root">{children}</div>;
   }
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <div className="admin-root">
+      <AdminShell>{children}</AdminShell>
+    </div>
+  );
 }
